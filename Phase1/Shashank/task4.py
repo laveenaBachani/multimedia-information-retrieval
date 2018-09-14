@@ -2,6 +2,7 @@ import argparse, numpy as np
 from heapq import *
 from collections import defaultdict
 
+np.seterr(divide='ignore', invalid='ignore')
 locations = ['acropolis_athens', 'agra_fort', 'albert_memorial', 'altes_museum', 'amiens_cathedral',
              'angel_of_the_north', 'angkor_wat', 'ara_pacis', 'arc_de_triomphe', 'aztec_ruins', 'berlin_cathedral',
              'big_ben', 'bok_tower_gardens', 'brandenburg_gate', 'cabrillo', 'casa_batllo', 'casa_rosada',
@@ -37,7 +38,7 @@ def read_data(model, location_to_read_from):
     return m, image_ids
 
 
-def eucledian(dictionary, location, image_ids, k, num_matches=20):
+def eucledian(dictionary, location, image_ids, k, num_matches=50):
     d = {}
     heap_setup = [[] for _ in range(len(dictionary[location]))]
     heap = []
@@ -76,12 +77,11 @@ def eucledian(dictionary, location, image_ids, k, num_matches=20):
                 ans.append((loc, list(zip(scoring[loc], counter[loc]))))
         if index_heap + 1 < len(heap_setup[index]):
             heappush(heap, (heap_setup[index][index_heap + 1][0][0], index, index_heap + 1))
-    for x in ans:
-        print(x[0])
+
     return ans
 
 
-def chi_squared(dictionary, location, image_ids, k, num_matches=20):
+def chi_squared(dictionary, location, image_ids, k, num_matches=50):
     d = {}
     heap_setup = [[] for _ in range(len(dictionary[location]))]
     heap = []
@@ -124,12 +124,11 @@ def chi_squared(dictionary, location, image_ids, k, num_matches=20):
                 ans.append((loc, list(zip(scoring[loc], counter[loc]))))
         if index_heap + 1 < len(heap_setup[index]):
             heappush(heap, (heap_setup[index][index_heap + 1][0][0], index, index_heap + 1))
-    for x in ans:
-        print(x[0])
+
     return ans
 
 
-def cosine(dictionary, location, image_ids, k, num_matches=20):
+def cosine(dictionary, location, image_ids, k, num_matches=50):
     d = {}
     heap_setup = [[] for _ in range(len(dictionary[location]))]
     heap = []
@@ -161,7 +160,7 @@ def cosine(dictionary, location, image_ids, k, num_matches=20):
                 heap_setup[i].extend(new_array)
     for i in range(len(heap_setup)):
         heap_setup[i] = sorted(heap_setup[i], key=heap_key)
-        heappush(heap, (heap_setup[i][0][0][0], i, 0))
+        heappush(heap, (-heap_setup[i][0][0][0], i, 0))
 
     while len(ans) < k:
         score, index, index_heap = heappop(heap)
@@ -171,22 +170,25 @@ def cosine(dictionary, location, image_ids, k, num_matches=20):
 
             counter[loc].append(heap_setup[index][index_heap][3])
 
-            scoring[loc].append((id, score))
+            scoring[loc].append((id, -score))
             if len(counter[loc]) == num_matches:
                 ans.append((loc, list(zip(scoring[loc], counter[loc]))))
         if index_heap + 1 < len(heap_setup[index]):
-            heappush(heap, (heap_setup[index][index_heap + 1][0][0], index, index_heap + 1))
-    for x in ans:
-        print(x[0])
+            heappush(heap, (-heap_setup[index][index_heap + 1][0][0], index, index_heap + 1))
+
     return ans
+
+
+def question_4_entry(args):
+    model, images = read_data(args.model, '../Data/img')
+    if args.model in {'CM', 'GLRLM3x3', 'LBP3x3', 'LBP'}:
+        return (chi_squared(model, locations[int(args.location_id)], images, int(args.k)))
+    elif args.model in {'CM3x3', 'GLRLM', 'CN', 'CN3x3'}:
+        return (eucledian(model, locations[int(args.location_id)], images, int(args.k)))
+    else:
+        return (cosine(model, locations[int(args.location_id)], images, int(args.k)))
 
 
 if __name__ == '__main__':
     args = parse_args()
-    model, images = read_data(args.model, '../Data/img')
-    if args.model in {'CM', 'GLRLM3x3', 'LBP3x3', 'LBP'}:
-        print(chi_squared(model, locations[int(args.location_id)], images, int(args.k)))
-    elif args.model in {'CM3x3', 'GLRLM', 'CN', 'CN3x3'}:
-        print(eucledian(model, locations[int(args.location_id)], images, int(args.k)))
-    else:
-        print(cosine(model, locations[int(args.location_id)], images, int(args.k)))
+    question_4_entry(args)
