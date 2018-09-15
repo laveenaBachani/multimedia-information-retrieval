@@ -21,14 +21,23 @@ def parse_args():
 
 if __name__ == '__main__':
     args = parse_args()
+    args.location_id = int(args.location_id) - 1
     models = ['CM', 'CM3x3', 'CN', 'CN3x3', 'CSD', 'GLRLM', 'GLRLM3x3', 'HOG', 'LBP', 'LBP3x3']
     K = args.k
-    d = defaultdict(lambda: 0)
+    d = defaultdict(lambda: [])
+    print('This is for location: {0}'.format(locations[args.location_id]))
     for x in models:
         args.model = x
         args.k = 29
-        result = question_4_entry(args)
+        result, distance = question_4_entry(args)
         for i, y in enumerate(result):
-            d[y[0]] += (i + 1)
-    items = sorted(map(lambda x: (x[0], x[1] / 29.), d.items()), key=lambda x: x[1])
-    print(items)
+            d[y[0]].append(i + 1)
+        print(args.model, distance)
+    items = sorted(map(lambda x: (x[0], sum(x[1]) / 10., x[1]), d.items()), key=lambda x: x[1])[:K]
+
+    for x in items:
+        print('######################## Matched Locations ########################')
+        print('Name :{0}'.format(x[0]))
+        print('Score :{0}'.format(x[1]))
+        print('Ranking from each model :{0}'.format(list(zip(models, x[2]))))
+        print('-------------------------------------------------------------------')

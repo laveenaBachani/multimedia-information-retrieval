@@ -182,13 +182,22 @@ def cosine(dictionary, location, image_ids, k, num_matches=50):
 def question_4_entry(args):
     model, images = read_data(args.model, '../Data/img')
     if args.model in {'CM', 'GLRLM3x3', 'LBP3x3', 'LBP'}:
-        return (chi_squared(model, locations[int(args.location_id)], images, int(args.k)))
+        return (chi_squared(model, locations[int(args.location_id)], images, int(args.k))), 'chi'
     elif args.model in {'CM3x3', 'GLRLM', 'CN', 'CN3x3'}:
-        return (eucledian(model, locations[int(args.location_id)], images, int(args.k)))
+        return (eucledian(model, locations[int(args.location_id)], images, int(args.k))), 'eucledian'
     else:
-        return (cosine(model, locations[int(args.location_id)], images, int(args.k)))
+        return (cosine(model, locations[int(args.location_id)], images, int(args.k))), 'cosine'
 
 
 if __name__ == '__main__':
     args = parse_args()
-    question_4_entry(args)
+    ans, distance = question_4_entry(args)
+    print('Location: ', locations[int(args.location_id)])
+    print('Model: ', args.model)
+    print('Distance Measure: ', distance)
+    for name, images in ans:
+        images = images[:3]
+        print('#######################  Location {0} ########################'.format(name))
+        for x in images:
+            print('Image Id:', x[0][0])
+            print('Score: ', x[0][1])

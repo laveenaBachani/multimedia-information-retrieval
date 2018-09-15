@@ -26,4 +26,9 @@ if __name__ == '__main__':
     ans = []
     while heap:
         ans.append(heappop(heap))
-    print(ans[::-1])
+    for i, x in enumerate(ans[::-1]):
+        print('################### RESULT FOR USER :{0} ###################'.format(i + 1))
+        print('User:{0}'.format(x[1]))
+        print('Score:{0}'.format(x[0]))
+        print('Top terms: {0}'.format(x[2]))
+        print('----------------------------------------------------------')

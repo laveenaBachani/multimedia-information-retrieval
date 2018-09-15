@@ -26,4 +26,4 @@ def cosine_similarity(u1, u2, model):
         return 0.0, []
     else:
         return float(numerator) / float(denominator), sorted([x for x in intersect],
-                                                             key=lambda x: (u1[x][model] * u2[x][model], x))[:3]
+                                                             key=lambda x: (-u1[x][model] * u2[x][model], x))[:3]
