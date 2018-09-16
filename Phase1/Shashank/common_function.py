@@ -13,7 +13,7 @@ def fetch_data(file_name):
         user_id = user.pop(0)
         d[user_id] = defaultdict(lambda: {})
         while len(user) > 1:
-            key, tf, df, tfidf = user.pop(0), float(user.pop(0)), float(user.pop(0)), float(user.pop(0))
+            key, tf, df, tfidf = user.pop(0), float(user.pop(0)), 1 / float(user.pop(0)), float(user.pop(0))
             d[user_id][key] = {'TF': tf, 'DF': df, 'TF-IDF': tfidf}
     return d
 

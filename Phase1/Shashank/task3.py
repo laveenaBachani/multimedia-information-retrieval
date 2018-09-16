@@ -2,6 +2,14 @@ import argparse
 from heapq import *
 from common_function import *
 
+import xmltodict
+
+locations = []
+with open("../Data/devset_topics.xml") as fd:
+    doc = xmltodict.parse(fd.read())
+    for topic in doc['topics']['topic']:
+        locations.append(topic['title'])
+
 
 def parse_args_process():
     argument_parse = argparse.ArgumentParser()
@@ -14,6 +22,7 @@ def parse_args_process():
 
 if __name__ == '__main__':
     args = parse_args_process()
+    args.location_id = locations[int(args.location_id) - 1]
     user_data = fetch_data('devset_textTermsPerPOI.txt')
     heap = []
     for x in user_data:

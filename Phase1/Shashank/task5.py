@@ -3,12 +3,13 @@ import argparse
 from task4 import *
 from collections import defaultdict
 
-locations = ['acropolis_athens', 'agra_fort', 'albert_memorial', 'altes_museum', 'amiens_cathedral',
-             'angel_of_the_north', 'angkor_wat', 'ara_pacis', 'arc_de_triomphe', 'aztec_ruins', 'berlin_cathedral',
-             'big_ben', 'bok_tower_gardens', 'brandenburg_gate', 'cabrillo', 'casa_batllo', 'casa_rosada',
-             'castillo_de_san_marcos', 'chartres_cathedral', 'chichen_itza', 'christ_the_redeemer_rio',
-             'civic_center_san_francisco', 'cn_tower', 'cologne_cathedral', 'colosseum', 'hearst_castle',
-             'la_madeleine', 'montezuma_castle', 'neues_museum', 'pont_alexandre_iii']
+import xmltodict
+
+locations = []
+with open("../Data/devset_topics.xml") as fd:
+    doc = xmltodict.parse(fd.read())
+    for topic in doc['topics']['topic']:
+        locations.append(topic['title'])
 
 
 def parse_args():

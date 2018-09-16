@@ -3,12 +3,14 @@ from heapq import *
 from collections import defaultdict
 
 np.seterr(divide='ignore', invalid='ignore')
-locations = ['acropolis_athens', 'agra_fort', 'albert_memorial', 'altes_museum', 'amiens_cathedral',
-             'angel_of_the_north', 'angkor_wat', 'ara_pacis', 'arc_de_triomphe', 'aztec_ruins', 'berlin_cathedral',
-             'big_ben', 'bok_tower_gardens', 'brandenburg_gate', 'cabrillo', 'casa_batllo', 'casa_rosada',
-             'castillo_de_san_marcos', 'chartres_cathedral', 'chichen_itza', 'christ_the_redeemer_rio',
-             'civic_center_san_francisco', 'cn_tower', 'cologne_cathedral', 'colosseum', 'hearst_castle',
-             'la_madeleine', 'montezuma_castle', 'neues_museum', 'pont_alexandre_iii']
+
+import xmltodict
+
+locations = []
+with open("../Data/devset_topics.xml") as fd:
+    doc = xmltodict.parse(fd.read())
+    for topic in doc['topics']['topic']:
+        locations.append(topic['title'])
 
 
 def parse_args():
@@ -96,7 +98,7 @@ def chi_squared(dictionary, location, image_ids, k, num_matches=50):
         if x != location:
             for i, y in enumerate(dictionary[location]):
                 y = y.reshape(1, y.shape[0])
-                matrix = ((dictionary[x] - y) ** 2) / np.abs(y)
+                matrix = ((dictionary[x] - y) ** 2) / y
 
                 matrix = matrix.sum(
                     axis=1).reshape(dictionary[x].shape[0],
@@ -124,7 +126,6 @@ def chi_squared(dictionary, location, image_ids, k, num_matches=50):
                 ans.append((loc, list(zip(scoring[loc], counter[loc]))))
         if index_heap + 1 < len(heap_setup[index]):
             heappush(heap, (heap_setup[index][index_heap + 1][0][0], index, index_heap + 1))
-
     return ans
 
 
@@ -137,7 +138,7 @@ def cosine(dictionary, location, image_ids, k, num_matches=50):
     ans = []
 
     def heap_key(x):
-        return x[0][0]
+        return -x[0][0]
 
     for x in dictionary:
         if x != location:
@@ -181,9 +182,9 @@ def cosine(dictionary, location, image_ids, k, num_matches=50):
 
 def question_4_entry(args):
     model, images = read_data(args.model, '../Data/img')
-    if args.model in {'CM', 'GLRLM3x3', 'LBP3x3', 'LBP'}:
+    if args.model in {'GLRLM3x3', 'LBP3x3', 'LBP'}:
         return (chi_squared(model, locations[int(args.location_id)], images, int(args.k))), 'chi'
-    elif args.model in {'CM3x3', 'GLRLM', 'CN', 'CN3x3'}:
+    elif args.model in {'CM3x3', 'GLRLM', 'CN', 'CN3x3', 'CM'}:
         return (eucledian(model, locations[int(args.location_id)], images, int(args.k))), 'eucledian'
     else:
         return (cosine(model, locations[int(args.location_id)], images, int(args.k))), 'cosine'
