@@ -192,6 +192,7 @@ def question_4_entry(args):
 
 if __name__ == '__main__':
     args = parse_args()
+    args.location_id = int(args.location_id) - 1
     ans, distance = question_4_entry(args)
     print('Location: ', locations[int(args.location_id)])
     print('Model: ', args.model)

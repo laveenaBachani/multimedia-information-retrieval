@@ -37,7 +37,7 @@ if __name__ == '__main__':
     items = sorted(map(lambda x: (x[0], sum(x[1]) / 10., x[1]), d.items()), key=lambda x: x[1])[:K]
 
     for x in items:
-        print('######################## Matched Locations ########################')
+        print('######################## Matched Location ########################')
         print('Name :{0}'.format(x[0]))
         print('Score :{0}'.format(x[1]))
         print('Ranking from each model :{0}'.format(list(zip(models, x[2]))))
