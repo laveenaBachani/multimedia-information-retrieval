@@ -78,13 +78,6 @@ class TextSimParser:
                     termsInfo[term] = termdata
                     i += 4
                 newformat[item_id] = termsInfo
-            for item_id, termsInfo in newformat.items():
-                for term, termdata in termsInfo.items():
-                    termdata["TF"] = termdata["TF"] / len(termsInfo)
-                    termdata["DF"] = termdata["DF"] / len(newformat)
-                    termdata["TF-IDF"] = termdata["TF"]/termdata["DF"]
-                    termsInfo[term] = termdata
-                newformat[item_id] = termsInfo
         return newformat
 
     @staticmethod
