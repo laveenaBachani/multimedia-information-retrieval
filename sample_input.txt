@@ -25,13 +25,9 @@
 
 6 TF-IDF 7
 
-### TASK 4, TESTCASES 3 ###
+### TASK 4, TESTCASES 1 ###
 
 10 CN3x3 7
-
-18 GLRLM 5
-
-30 LBP3x3 5
 
 ### TASK 5, TESTCASES 1 ###
 
