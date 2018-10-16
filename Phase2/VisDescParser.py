@@ -1,7 +1,5 @@
 import locationInfoParser
 import numpy as np
-import json
-import time
 import get_latent_features as glf
 from APIs import generic_apis
 
@@ -17,10 +15,9 @@ class VisDescParser:
 
     TOPICS_INFO_FILE = "devset_topics.xml"
 
-    @staticmethod
-    def getFilePath(visDesBasePath, modelName, locationTitle):
-        filePath = visDesBasePath + locationTitle + ' ' + modelName + '.csv'
-        return filePath
+    def getVisDiscFilePath(self, allLocationDetails, locationId, visDescModelName):
+        locationFilePath = self.RELATIVE_DEV_SET_PATH + "descvis/img/" + allLocationDetails[locationId]['title'] +" "+ visDescModelName + ".csv"
+        return locationFilePath
 
     def getAllLocationDetails(self):
         topicsFilePath = self.RELATIVE_DEV_SET_PATH + self.TOPICS_INFO_FILE
@@ -28,30 +25,20 @@ class VisDescParser:
         allLocationDetails = locInfoParser.parse_xml_topic(topicsFilePath)
         return allLocationDetails
 
+
+
     def getTask5Items(self, dimRedAlgo, numLatSemFeat, givlocId, visDescModelName, numSimLocReq):
-        filePath = "../devset/descvis/img/acropolis_athens CM.csv"
         allLocationDetails = self.getAllLocationDetails()
         allLocationReqSemFeat = {}
         for locationId in allLocationDetails:
-            #if locationId not in ["1","2"]:
-            #    continue
-            print(locationId)
-            print(type(locationId))
-            locationFilePath = self.RELATIVE_DEV_SET_PATH + "descvis/img/" + allLocationDetails[locationId]['title'] +" "+ visDescModelName + ".csv"
-            print(locationFilePath)
+            print("Generating semantic features for location id:"+locationId)
+            locationFilePath = self.getVisDiscFilePath(allLocationDetails, locationId, visDescModelName)
             allLocationReqSemFeat[locationId] = glf.get_latent_features_vis_disc(locationFilePath, dimRedAlgo, numLatSemFeat)
-            #allLocationReqSemFeat[locationId] = glf.get_latent_features_vis_disc("../devset/descvis/img/acropolis_athens CM.csv","LDA",2)
-        #print(json.dumps(allLocationReqSemFeat))
-        #print(allLocationReqSemFeat)
         allLocationsMatch = {}
 
         for locationId in allLocationDetails:
             if locationId != givlocId:
                 allLocationsMatch[locationId] = self.getLocationSimilarity(allLocationReqSemFeat, givlocId, locationId, visDescModelName)
-
-
-        #allLocationsMatch["2"] = self.getLocationSimilarity(allLocationReqSemFeat, givlocId, "2", visDescModelName)
-        print(allLocationsMatch)
         algo = self.modelWiseDistSimAlgo(visDescModelName)
         sorted_list = [x for x in allLocationsMatch.items()]
         sorted_list.sort(key=lambda x: x[1])  # sort by value
@@ -67,12 +54,10 @@ class VisDescParser:
 
         location1features = location1Data[:, 1:]
         location2features = location2Data[:, 1:]
-        nr1 =  location1features.shape[0]
-        print(type(location1Data))
+        nr1 = location1features.shape[0]
+
         count = 0
         dist = 0
-        start = time.time()
-        pairwiseDist = []
         for i in range(nr1):
             individual_vector = location1features[:][i]
             if algo == self.ALGO_COSINE_SIMILARITY:
@@ -81,19 +66,9 @@ class VisDescParser:
                 imgPairDistSim = generic_apis.eucledian_distance(location2features, individual_vector)
             else:
                 imgPairDistSim = generic_apis.chi_squared(location2features, individual_vector)
-            #print("imgPairDistSim:")
-            #print(imgPairDistSim)
             dist += np.sum(imgPairDistSim)
             count += imgPairDistSim.shape[0]
-            #print(dist)
-            #print(count)
-            #exit()
         avgDist = dist / count
-        end = time.time()
-        t3 = end - start
-        print(str(locationId2), ' time:', t3, ' avgDist:', avgDist)
-        if algo == self.ALGO_COSINE_SIMILARITY:
-            pairwiseDist.reverse()
         return avgDist
 
     def modelWiseDistSimAlgo(self,modelName):
