@@ -27,7 +27,7 @@ class VisDescParser:
 
 
 
-    def getTask5Items(self, dimRedAlgo, numLatSemFeat, givlocId, visDescModelName, numSimLocReq):
+    def getTask4Items(self, dimRedAlgo, numLatSemFeat, givlocId, visDescModelName, numSimLocReq):
         allLocationDetails = self.getAllLocationDetails()
         allLocationReqSemFeat = {}
         for locationId in allLocationDetails:
@@ -44,8 +44,6 @@ class VisDescParser:
         sorted_list.sort(key=lambda x: x[1])  # sort by value
         if algo == self.ALGO_COSINE_SIMILARITY:
             sorted_list.reverse()
-        print("Found following most similar locations:-")
-        print(sorted_list[:numSimLocReq])
         return sorted_list[:numSimLocReq]
 
     def getLocationSimilarity(self, allLocationsData, locationId1, locationId2, algo):
@@ -63,9 +61,9 @@ class VisDescParser:
             if algo == self.ALGO_COSINE_SIMILARITY:
                 imgPairDistSim = generic_apis.consine_similarity(location2features, individual_vector)
             elif algo == self.ALGO_CHI_SQUARE_DISTANCE:
-                imgPairDistSim = generic_apis.eucledian_distance(location2features, individual_vector)
-            else:
                 imgPairDistSim = generic_apis.chi_squared(location2features, individual_vector)
+            else:
+                imgPairDistSim = generic_apis.eucledian_distance(location2features, individual_vector)
             dist += np.sum(imgPairDistSim)
             count += imgPairDistSim.shape[0]
         avgDist = dist / count
@@ -87,4 +85,5 @@ class VisDescParser:
 
 
 obj = VisDescParser()
-obj.getTask5Items("LDA",2,"1","CM",5)
+out = obj.getTask4Items("LDA",2,"1","CM",5)
+print(out)
