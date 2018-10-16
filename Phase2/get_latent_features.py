@@ -15,10 +15,9 @@ def get_latent_features_vis_disc(filename_with_path, model, k):
     elif model == "SVD":
         latent_l_features, comp = generic_apis.get_SVD(features, k)
     elif model == "LDA":
-        latent_l_features, comp = generic_apis.et_LDA(features, k)
+        latent_l_features, comp = generic_apis.get_LDA(features, k)
     else:
         print("Wrong Dimension Reduction Model - " + model)
         return np.empty(0)
 
     return np.concatenate((objects, latent_l_features), axis=1)
-
