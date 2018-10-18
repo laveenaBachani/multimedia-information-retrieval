@@ -1,7 +1,8 @@
+import get_latent_features as glf
 import locationInfoParser
 import numpy as np
-import get_latent_features as glf
 from APIs import generic_apis
+import datetime
 
 class VisDescParser:
 
@@ -26,10 +27,10 @@ class VisDescParser:
         return allLocationDetails
 
 
-
     def getTask4Items(self, dimRedAlgo, numLatSemFeat, givlocId, visDescModelName, numSimLocReq):
         allLocationDetails = self.getAllLocationDetails()
         allLocationReqSemFeat = {}
+
         for locationId in allLocationDetails:
             print("Generating semantic features for location id:"+locationId)
             locationFilePath = self.getVisDiscFilePath(allLocationDetails, locationId, visDescModelName)
@@ -83,7 +84,41 @@ class VisDescParser:
         }
         return algo[modelName]
 
+    def getTask5Items(self, loc_id , k, dimRedAlgo ):
+
+        vd_model_list = ["CM", "CM3x3", "CN", "CN3x3", "CSD", "GLRLM", "GLRLM3x3", "HOG", "LBP", "LBP3x3"]
+        # vd_model_list = ["CM", "CM3x3", "CN", "CN3x3"]
+        score_list = {}
+        # vd_model_weight = [9, 81, 11, 99, 64, 44, 396, 81, 16, 144]
+        for vd_model in vd_model_list:
+            out = obj.getTask4Items("LDA", 2, "1", vd_model, 30)
+            print("VD Model " + vd_model + " -")
+            print(out)
+            score_list[vd_model] = out
+
+        all_location_details = self.getAllLocationDetails()
+        location_ids = all_location_details.keys()
+        location_with_model_scores = {}
+
+        for location in location_ids:
+            rank_sum = 0
+            for mod in score_list:
+                for var in score_list[mod]:
+                    if location == var[0]:
+                        rank_sum += score_list[mod].index(var) + 1
+                        break
+            location_with_model_scores[location] = rank_sum / len(vd_model_list)
+
+        location_with_model_scores_sorted = sorted(location_with_model_scores.items(), key=lambda kv: kv[1])
+
+        print("\nOutput -\n 5 Similar locations -\n")
+        for i in range(5):
+            loc = location_with_model_scores_sorted[i][0]
+            print("location id - " + str(loc))
+            print("matching score - " + str(location_with_model_scores_sorted[i][1]))
+
 
 obj = VisDescParser()
-out = obj.getTask4Items("LDA",2,"1","CM",5)
-print(out)
+obj.getTask5Items("1",5,"LDA")
+# out = obj.getTask5Items("LDA",2,"1","CM",5)
+# print(out)
