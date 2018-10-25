@@ -20,14 +20,18 @@ class Task5:
 
     def searchFirstFile(self, LocationId, Model_name):
         t = Task5()
+        list = []
         first_file_name = t.locations[LocationId - 1] + " " + Model_name + ".csv"
         for file in os.listdir("./img"):
             if file.startswith(first_file_name):
-                f = open("./img/" + first_file_name)
-                reader = csv.reader(f)
-                list = []
-                for row in reader:
-                    list.append(row)
+                try:
+                    f = open("./img/" + first_file_name)
+                    reader = csv.reader(f)
+
+                    for row in reader:
+                        list.append(row)
+                except:
+                    print("file not found")
         return list
 
     def createMatrixLocLoc(self):
@@ -40,6 +44,11 @@ class Task5:
                 for j in range(1, 31):
                     list1 = t.searchFirstFile(i, x)
                     list2 = t.searchFirstFile(j, x)
+                    if (len(list1)==0 or len(list2)==0):
+                        print(len(list1))
+                        print(len(list2))
+                        listofmaximages.append(0)
+                        continue
                     df = np.array(list1)
                     df2 = np.array(list2)
                     if x in ["CM3x3", "GLRLM", "CN3x3", "CN", "CM"]:
@@ -48,6 +57,7 @@ class Task5:
                         dist = chi2_kernel(df[:, 1:], df2[:, 1:])
                     elif x in ["HOG", "CSD"]:
                         dist = cosine_distances(df[:, 1:], df2[:, 1:])
+                    print(len(dist))
                     min = dist.min(axis=1)
                     s = np.sum(np.array(min))
                     listofmaximages.append(s)
