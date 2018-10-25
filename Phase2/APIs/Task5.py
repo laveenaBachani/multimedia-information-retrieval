@@ -9,7 +9,6 @@ from Phase2.APIs.generic_apis import *
 from scipy.sparse import csc_matrix
 import sys
 
-
 class Task5:
     locations = []
     with open("devset_topics.xml") as fd:
@@ -27,7 +26,6 @@ class Task5:
                 try:
                     f = open("./img/" + first_file_name)
                     reader = csv.reader(f)
-
                     for row in reader:
                         list.append(row)
                 except:
@@ -45,8 +43,6 @@ class Task5:
                     list1 = t.searchFirstFile(i, x)
                     list2 = t.searchFirstFile(j, x)
                     if (len(list1)==0 or len(list2)==0):
-                        print(len(list1))
-                        print(len(list2))
                         listofmaximages.append(0)
                         continue
                     df = np.array(list1)
@@ -57,7 +53,6 @@ class Task5:
                         dist = chi2_kernel(df[:, 1:], df2[:, 1:])
                     elif x in ["HOG", "CSD"]:
                         dist = cosine_distances(df[:, 1:], df2[:, 1:])
-                    print(len(dist))
                     min = dist.min(axis=1)
                     s = np.sum(np.array(min))
                     listofmaximages.append(s)
@@ -82,7 +77,7 @@ def main():
     for j in range(k):
         for i in range(30):
             index = np.argsort(reduced[:, j])
-            sorted = np.sort(reduced[:, j])
+            sorted = np.sort(reduced[:, j], order = )
         for i in range(30):
             print(t1.locations[index[i]], end = " ")
             print(sorted[i])
