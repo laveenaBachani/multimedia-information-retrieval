@@ -35,7 +35,7 @@ def task7():
     num_cores = multiprocessing.cpu_count()
     k = int(input("Enter a value for k: "))
     tensorFileName = "userImageLocation-tensor.npy"
-    factorMatricesFileName = "factor-matrices.npy"
+    factorMatricesFileName = "factor-matrices" + str(k) + ".npy"
     cwd = os.getcwd()
 
     # Load each object space into dictionary where d_obj = {'id': {'term': df, ...}, ...}
