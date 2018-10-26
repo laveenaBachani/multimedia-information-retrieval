@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
 import numpy as np
+import argparse
 from Phase2 import get_latent_features
 from APIs import generic_apis
 from collections import OrderedDict
@@ -13,11 +14,23 @@ for child1 in root:
             mapping[root[c][1].text] = id
             c = c + 1
 
-print("Enter visual descriptor model, value of k, dimensionality reduction model, image id \n")
-modelname = "CSD"  # input()  # get visual descriptor model name input
-nooffeatures = 5  # input()  # get no of records input
-dmmodelname = "LDA"  # input()  # get dimensionality reduction model name input
-inputid = "1674808621"  # input()  # get image id input
+# input from user
+def parse_args_process():
+    argument_parse = argparse.ArgumentParser()
+    argument_parse.add_argument('--model_name', help='The visual descriptor model you want to use (CM/CM3x3/CN/CN3x3/CSD/GLRLM/GLRLM3x3/HOG/LBP/LBP3x3 )', type=str, required=True,
+                                choices=['CM','CM3x3','CN', 'CN3x3','CSD','GLRLM','GLRLM3x3','HOG','LBP', 'LBP3x3'])
+    argument_parse.add_argument('--no_of_features', help='The number semantics you want to find', type=int, required=True)
+    argument_parse.add_argument('--dm_model_name', help='The model you want to use (PCA/SVD/LDA)', type=str, required=True,
+                                choices=['PCA', 'SVD', 'LDA'])
+    argument_parse.add_argument('--input_id', help='The image id', type=int, required=True)
+    args = argument_parse.parse_args()
+    return args
+
+modelname = args.model_name
+nooffeatures = args.no_of_features
+dmmodelname = args.dm_model_name
+inputid=args.input_id
+
 
 def algotype(modelname):  # function to select similarity algorithm
     if modelname in {"CN", "CN3x3", "CM3x3", "GLRLM"}:
