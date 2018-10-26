@@ -1,3 +1,4 @@
+import argparse
 from Tasks import get_latent_features as glf, locationInfoParser
 import numpy as np
 from APIs import generic_apis
@@ -11,7 +12,7 @@ class VisDescParser:
 
     ALGO_CHI_SQUARE_DISTANCE = "chi_square_distance"
 
-    RELATIVE_DEV_SET_PATH = "../devset/"
+    RELATIVE_DEV_SET_PATH = "../Data/"
 
     TOPICS_INFO_FILE = "devset_topics.xml"
 
@@ -92,7 +93,7 @@ class VisDescParser:
         for vd_model in vd_model_list:
             out = obj.getTask4Items("LDA", 2, "1", vd_model, 30)
             print("VD Model " + vd_model + " -")
-            print(out)
+            # print(out)
             score_list[vd_model] = out
 
         all_location_details = self.getAllLocationDetails()
@@ -110,14 +111,29 @@ class VisDescParser:
 
         location_with_model_scores_sorted = sorted(location_with_model_scores.items(), key=lambda kv: kv[1])
 
-        print("\nOutput -\n 5 Similar locations -\n")
+        print("\nOutput -\n5 Similar locations -")
+        print("location_id\t\tScore")
         for i in range(5):
             loc = location_with_model_scores_sorted[i][0]
-            print("location id - " + str(loc))
-            print("matching score - " + str(location_with_model_scores_sorted[i][1]))
+            print("\t" + str(loc) + "\t\t\t " + str(location_with_model_scores_sorted[i][1]))
 
 
+def parse_args_process():
+    argument_parse = argparse.ArgumentParser()
+    argument_parse.add_argument('--loc_id', help='Enter the location id -', type=str, required=True,
+                                )
+    argument_parse.add_argument('--model', help='The model you want to use(PCA/SVD/LDA)', type=str, required=True,
+                                choices=['PCA', 'SVD', 'LDA'])
+    argument_parse.add_argument('--k', help='The number semantics you want to find', type=int, required=True)
+    args = argument_parse.parse_args()
+    return args
+
+
+# Main starts here
+
+args = parse_args_process()
 obj = VisDescParser()
-obj.getTask5Items("1",5,"LDA")
+obj.getTask5Items(args.loc_id, args.k,args.model)
+# obj.getTask5Items("1",5,"LDA")
 # out = obj.getTask5Items("LDA",2,"1","CM",5)
 # print(out)
