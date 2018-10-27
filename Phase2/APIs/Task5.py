@@ -35,11 +35,11 @@ class Task5:
     def createMatrixLocLoc(self):
         matrix = []
         t = Task5()
-        for i in range(1, 31):
+        for i in range(1, len(t.locations)+1):
             listofmax = []
             for x in t.Models:
                 listofmaximages = []
-                for j in range(1, 31):
+                for j in range(1, len(t.locations)+1):
                     list1 = t.searchFirstFile(i, x)
                     list2 = t.searchFirstFile(j, x)
                     if (len(list1)==0 or len(list2)==0):
@@ -71,15 +71,17 @@ def main():
     k = int(sys.argv[1])
     matrix = t1.createMatrixLocLoc()
     arr = csc_matrix(matrix)
+
     arr = arr.astype(float)
     arr = np.negative(arr)
+    # np.savetxt("data_task6.csv", arr, delimiter=",")
     reduced, n_comp = get_SVD(arr, k)
     for j in range(k):
         for i in range(30):
-            index = np.argsort(reduced[:, j])
-            sorted = np.sort(reduced[:, j], order = )
+            index = np.argsort(-reduced[:, j])
+            sorted = -np.sort(-reduced[:, j])
         for i in range(30):
-            print(t1.locations[index[i]], end = " ")
+            print(t1.locations[index[i]], end = "")
             print(sorted[i])
         print("")
 
