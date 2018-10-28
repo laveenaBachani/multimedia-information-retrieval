@@ -87,18 +87,43 @@ class VisDescParser:
         }
         return algo[modelName]
 
+    def write_latent_semantics_task5(self, vd_model, locInKSem, KSemInFet):
+
+        f = open("task5output.txt", "a+")
+        f.write("\nVD Model " + vd_model + " -\n")
+
+        f.write("latent semantics - \n")
+
+        # f.write(np.array2string(KSemInFet)+"\n")
+        np.savetxt('task5npsave.txt', KSemInFet)
+
+        npsave = open('task5npsave.txt')
+
+        for line in npsave:
+            f.write("["+line+"]\n")
+
+        f.close()
+
     def getTask5Items(self, loc_id , k, dimRedAlgo ):
 
+        print("\nInput -\nlocation_id - " + loc_id + "\nDimension reduction model - " + dimRedAlgo + "\nk = " + str(k))
+
+        f = open("task5output.txt", "w")
+        f.write("\nInput \nlocation_id - " + loc_id + "\nDimension reduction model - " + dimRedAlgo + "\nk = " + str(
+            k) + "\n")
+        f.close()
         vd_model_list = ["CM", "CM3x3", "CN", "CN3x3", "CSD", "GLRLM", "GLRLM3x3", "HOG", "LBP", "LBP3x3"]
         # vd_model_list = ["CM", "CM3x3", "CN", "CN3x3"]
         score_list = {}
         # vd_model_weight = [9, 81, 11, 99, 64, 44, 396, 81, 16, 144]
+        print("Calculating rank of locations for each visual descriptor model-")
         for vd_model in vd_model_list:
-            out = obj.getTask4Items("LDA", 2, "1", vd_model, 30)
-            print("VD Model " + vd_model + " -")
-            print(out)
+            out, locInKSem, KSemInFet = self.getTask4Items(dimRedAlgo, k, loc_id, vd_model, 30)
+            self.write_latent_semantics_task5(vd_model, locInKSem, KSemInFet)
+            # print("VD Model " + vd_model + " -")
             score_list[vd_model] = out
 
+        print("Calculating cumulative rank -")
         all_location_details = self.getAllLocationDetails()
         location_ids = all_location_details.keys()
         location_with_model_scores = {}
@@ -114,12 +139,17 @@ class VisDescParser:
 
         location_with_model_scores_sorted = sorted(location_with_model_scores.items(), key=lambda kv: kv[1])
 
-        print("\nOutput -\n 5 Similar locations -\n")
+
+        f = open("task5output.txt", "a+")
+
+        print("\nOutput -\n5 Similar locations -")
+        f.write("\nOutput -\n5 Similar locations -\n")
+        print("location_id\t\tScore")
+        f.write("location_id\t\tScore\n")
         for i in range(5):
             loc = location_with_model_scores_sorted[i][0]
-            print("location id - " + str(loc))
-            print("matching score - " + str(location_with_model_scores_sorted[i][1]))
-
-
+            print("\t" + str(loc) + "\t\t\t " + str(location_with_model_scores_sorted[i][1]))
+            f.write("\t" + str(loc) + "\t\t\t " + str(location_with_model_scores_sorted[i][1])+"\n")
+        f.close()
 # out = obj.getTask5Items("LDA",2,"1","CM",5)
 # print(out)

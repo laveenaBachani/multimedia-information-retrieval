@@ -1,5 +1,5 @@
 import argparse
-from Phase2.Modules import VisDescParser
+from Phase2.Modules import VisDescParser as vd
 
 def parse_args_process():
     argument_parse = argparse.ArgumentParser()
@@ -15,7 +15,7 @@ def parse_args_process():
 # Main starts here
 
 args = parse_args_process()
-obj = VisDescParser()
+obj = vd.VisDescParser()
 obj.getTask5Items(args.loc_id, args.k,args.model)
 # obj.getTask5Items("1",5,"LDA")
 # out = obj.getTask5Items("LDA",2,"1","CM",5)
