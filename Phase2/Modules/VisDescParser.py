@@ -39,14 +39,14 @@ class VisDescParser:
                 KSemInFet = comp
 
         allLocationsMatch = {}
-
-        for locationId in allLocationDetails:
-            allLocationsMatch[locationId] = self.getLocationSimilarity(allLocationReqSemFeat, givlocId, locationId, visDescModelName)
         algo = self.modelWiseDistSimAlgo(visDescModelName)
+        for locationId in allLocationDetails:
+            allLocationsMatch[locationId] = self.getLocationSimilarity(allLocationReqSemFeat, givlocId, locationId, algo)
         sorted_list = [x for x in allLocationsMatch.items()]
         sorted_list.sort(key=lambda x: x[1])  # sort by value
         if algo == self.ALGO_COSINE_SIMILARITY:
             sorted_list.reverse()
+
         return sorted_list[:numSimLocReq], locInKSem, KSemInFet
 
     def getLocationSimilarity(self, allLocationsData, locationId1, locationId2, algo):
@@ -67,8 +67,11 @@ class VisDescParser:
                 imgPairDistSim = generic_apis.chi_squared(location2features, individual_vector)
             else:
                 imgPairDistSim = generic_apis.eucledian_distance(location2features, individual_vector)
-            dist += np.sum(np.min(imgPairDistSim))
-            count += imgPairDistSim.shape[0]
+            maxSimilarity = np.min(imgPairDistSim)
+            if algo == self.ALGO_COSINE_SIMILARITY:
+                maxSimilarity = np.max(imgPairDistSim)
+            dist += np.sum(maxSimilarity)
+            count += 1
         avgDist = dist / count
         return avgDist
 
