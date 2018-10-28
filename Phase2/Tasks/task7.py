@@ -1,10 +1,18 @@
-from APIs.generic_apis import *
+from Phase2.APIs.generic_apis import *
 import xmltodict
 import numpy as np
 import os
 from tensorly.decomposition import parafac
 from joblib import Parallel, delayed
 import multiprocessing
+import argparse
+
+
+def parse_args_process():
+    argument_parse = argparse.ArgumentParser()
+    argument_parse.add_argument('--k', help='The number semantics you want to find', type=int, required=True)
+    args = argument_parse.parse_args()
+    return args
 
 
 # Load name for each locationId
@@ -28,12 +36,12 @@ def printGroups(groups, i, f):
     f.write(' '.join(groups[i]) + '\n')
 
 
-def task7():
+def task7(args):
     """
     Core logic for task7
     """
     num_cores = multiprocessing.cpu_count()
-    k = int(input("Enter a value for k: "))
+    k = int(args.k)
     tensorFileName = "userImageLocation-tensor.npy"
     factorMatricesFileName = "factor-matrices" + str(k) + ".npy"
     cwd = os.getcwd()
@@ -107,7 +115,7 @@ def task7():
 
         for j in range(f_matrix.shape[0]):
             # Assign object to one of k groups/latent-features that it has highest membership towards
-            object_id = indexToSpaceIds[factor_index][j] # Map indices back to user/image/location id's
+            object_id = indexToSpaceIds[factor_index][j]  # Map indices back to user/image/location id's
             group_index = np.argmax(f_matrix[j])
             groups[group_index].append(object_id)
 
@@ -134,4 +142,4 @@ def task7():
 
 
 if __name__ == '__main__':
-    task7()
+    task7(parse_args_process())

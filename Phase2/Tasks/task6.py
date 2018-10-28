@@ -87,7 +87,7 @@ def main(args):
     else:
         matrix = t1.createMatrixLocLoc()
         arr = -np.array(matrix)
-        print(arr.tolist())
+
         # print(arr.shape, arr)
         # np.savetxt(task_6_data, arr.tolist(), fmt='%f')
         np.save(task_6_data, arr)
@@ -96,14 +96,18 @@ def main(args):
     #
     # np.savetxt("data_task6.csv", arr, delimiter=",")
     reduced, n_comp = get_SVD(arr, k)
-    for j in range(k):
-        for i in range(30):
-            index = np.argsort(-reduced[:, j])
-            sorted = -np.sort(-reduced[:, j])
-        for i in range(30):
-            print(t1.locations[index[i]], end="")
-            print(sorted[i])
-        print("")
+    with open('task6_output.txt', 'w') as f:
+        for j in range(k):
+            f.write('Latent Semantics' + str(j + 1) + ':\n')
+            for i in range(30):
+                index = np.argsort(-reduced[:, j])
+                sorted = np.take(reduced[:, j], index)
+
+            for i in range(30):
+                f.write(str(t1.locations[index[i]]) + ' : ' + str(sorted[i]) + '\n')
+            f.write('\n\n')
+        f.flush()
+        f.close()
 
 
 if __name__ == "__main__":

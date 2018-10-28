@@ -1,8 +1,12 @@
 import numpy as np
 from sklearn.decomposition import PCA, TruncatedSVD, LatentDirichletAllocation
 import pandas as pd
+import warnings
+
+warnings.simplefilter('ignore', RuntimeWarning)
 
 np.seterr(divide='ignore', invalid='ignore')
+np.random.seed(1)
 
 
 def read_text_descriptor_files(file_name):
@@ -39,7 +43,9 @@ def tDictionary_to_vector(dictionary):
 
 def normalize_vector(vector):
     minimum, maximum = np.min(vector), np.max(vector)
-    return (vector - minimum) / (maximum - minimum)
+    ans = (vector - minimum)
+    diff = maximum - minimum
+    return ans / diff
 
 
 def get_PCA(vector, k):
@@ -55,7 +61,7 @@ def get_SVD(vector, k):
 
 
 def get_LDA(vector, k):
-    lda = LatentDirichletAllocation(n_components=k, learning_method='online')
+    lda = LatentDirichletAllocation(n_components=k, learning_method='batch')
     new_vector = lda.fit_transform(vector)
     return new_vector, lda.components_
 
@@ -78,7 +84,7 @@ def eucledian_distance(vector, individual_vector):
 
 
 def chi_squared(vector, individual_vector):
-    return np.sum(((vector - individual_vector) ** 2) / individual_vector, axis=1)
+    return np.sum(((vector - individual_vector) ** 2) / np.abs(individual_vector), axis=1)
 
 
 def return_max_k(distances, k):
