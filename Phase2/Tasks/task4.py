@@ -24,6 +24,7 @@ def write_output(line):
     f.close()
 
 def print_output(result , locInKSem, KSemInFet):
+    write_output("Input :"+str(args))
     write_output("Location in K semantics")
     for sem in locInKSem:
         write_output(np.array2string(sem))

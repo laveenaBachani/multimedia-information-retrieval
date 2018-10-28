@@ -41,8 +41,7 @@ class VisDescParser:
         allLocationsMatch = {}
 
         for locationId in allLocationDetails:
-            if locationId != givlocId:
-                allLocationsMatch[locationId] = self.getLocationSimilarity(allLocationReqSemFeat, givlocId, locationId, visDescModelName)
+            allLocationsMatch[locationId] = self.getLocationSimilarity(allLocationReqSemFeat, givlocId, locationId, visDescModelName)
         algo = self.modelWiseDistSimAlgo(visDescModelName)
         sorted_list = [x for x in allLocationsMatch.items()]
         sorted_list.sort(key=lambda x: x[1])  # sort by value
@@ -68,7 +67,7 @@ class VisDescParser:
                 imgPairDistSim = generic_apis.chi_squared(location2features, individual_vector)
             else:
                 imgPairDistSim = generic_apis.eucledian_distance(location2features, individual_vector)
-            dist += np.sum(imgPairDistSim)
+            dist += np.sum(np.min(imgPairDistSim))
             count += imgPairDistSim.shape[0]
         avgDist = dist / count
         return avgDist
