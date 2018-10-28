@@ -29,11 +29,15 @@ class VisDescParser:
     def getTask4Items(self, dimRedAlgo, numLatSemFeat, givlocId, visDescModelName, numSimLocReq):
         allLocationDetails = self.getAllLocationDetails()
         allLocationReqSemFeat = {}
-
+        locInKSem = []
+        KSemInFet = []
         for locationId in allLocationDetails:
-            print("Generating semantic features for location id:"+locationId)
             locationFilePath = self.getVisDiscFilePath(allLocationDetails, locationId, visDescModelName)
-            allLocationReqSemFeat[locationId] = glf.get_latent_features_vis_disc(locationFilePath, dimRedAlgo, numLatSemFeat)
+            allLocationReqSemFeat[locationId], comp = glf.get_latent_features_vis_disc(locationFilePath, dimRedAlgo, numLatSemFeat)
+            if locationId == givlocId:
+                locInKSem = allLocationReqSemFeat[locationId]
+                KSemInFet = comp
+
         allLocationsMatch = {}
 
         for locationId in allLocationDetails:
@@ -44,7 +48,7 @@ class VisDescParser:
         sorted_list.sort(key=lambda x: x[1])  # sort by value
         if algo == self.ALGO_COSINE_SIMILARITY:
             sorted_list.reverse()
-        return sorted_list[:numSimLocReq]
+        return sorted_list[:numSimLocReq], locInKSem, KSemInFet
 
     def getLocationSimilarity(self, allLocationsData, locationId1, locationId2, algo):
         location1Data = allLocationsData[locationId1]
@@ -117,7 +121,5 @@ class VisDescParser:
             print("matching score - " + str(location_with_model_scores_sorted[i][1]))
 
 
-obj = VisDescParser()
-obj.getTask5Items("1",5,"LDA")
 # out = obj.getTask5Items("LDA",2,"1","CM",5)
 # print(out)
