@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<topics>
+<topic>
+	<number>1</number>
+	<title>angel_of_the_north</title>
+	<latitude>54.9141</latitude>
+	<longitude>-1.58949</longitude>
+	<wiki>http://en.wikipedia.org/wiki/Angel_of_the_North</wiki>
+</topic>
+<topic>
+	<number>2</number>
+	<title>big_ben</title>
+	<latitude>51.5006</latitude>
+	<longitude>-0.124653</longitude>
+	<wiki>http://en.wikipedia.org/wiki/Big_Ben</wiki>
+</topic>
+<topic>
+	<number>3</number>
+	<title>hearst_castle</title>
+	<latitude>35.685200</latitude>
+	<longitude>-121.166600</longitude>
+	<wiki>http://en.wikipedia.org/wiki/Hearst_Castle</wiki>
+</topic>
+<topic>
+	<number>4</number>
+	<title>la_madeleine</title>
+	<latitude>48.87</latitude>
+	<longitude>2.324167</longitude>
+	<wiki>http://en.wikipedia.org/wiki/La_Madeleine,_Paris</wiki>
+</topic>
+<topic>
+	<number>5</number>
+	<title>pont_alexandre_iii</title>
+	<latitude>48.863611</latitude>
+	<longitude>2.313611</longitude>
+	<wiki>http://en.wikipedia.org/wiki/Pont_Alexandre_III</wiki>
+</topic>
+<topic>
+	<number>6</number>
+	<title>neues_museum</title>
+	<latitude>52.520556</latitude>
+	<longitude>13.397778</longitude>
+	<wiki>http://en.wikipedia.org/wiki/Neues_Museum</wiki>
+</topic>
+<topic>
+	<number>7</number>
+	<title>montezuma_castle</title>
+	<latitude>34.613056</latitude>
+	<longitude>-111.840000</longitude>
+	<wiki>http://en.wikipedia.org/wiki/Montezuma_Castle_National_Monument</wiki>
+</topic>
+<topic>
+	<number>8</number>
+	<title>cn_tower</title>
+	<latitude>43.6426</latitude>
+	<longitude>-79.3871</longitude>
+	<wiki>http://en.wikipedia.org/wiki/CN_Tower</wiki>
+</topic>
+<topic>
+	<number>9</number>
+	<title>acropolis_athens</title>
+	<latitude>37.971421</latitude>
+	<longitude>23.726166</longitude>
+	<wiki>http://en.wikipedia.org/wiki/Acropolis_of_Athens</wiki>
+</topic>
+<topic>
+	<number>10</number>
+	<title>agra_fort</title>
+	<latitude>27.179542</latitude>
+	<longitude>78.021101</longitude>
+	<wiki>http://en.wikipedia.org/wiki/Agra_Fort</wiki>
+</topic>
+<topic>
+	<number>11</number>
+	<title>albert_memorial</title>
+	<latitude>51.5025</latitude>
+	<longitude>-0.177778</longitude>
+	<wiki>http://en.wikipedia.org/wiki/Albert_Memorial</wiki>
+</topic>
+<topic>
+	<number>12</number>
+	<title>altes_museum</title>
+	<latitude>52.519444</latitude>
+	<longitude>13.398333</longitude>
+	<wiki>http://en.wikipedia.org/wiki/Altes_Museum</wiki>
+</topic>
+<topic>
+	<number>13</number>
+	<title>amiens_cathedral</title>
+	<latitude>49.895</latitude>
+	<longitude>2.302222</longitude>
+	<wiki>http://en.wikipedia.org/wiki/Amiens_Cathedral</wiki>
+</topic>
+<topic>
+	<number>14</number>
+	<title>angkor_wat</title>
+	<latitude>13.4125</latitude>
+	<longitude>103.866667</longitude>
+	<wiki>http://en.wikipedia.org/wiki/Angkor_Wat</wiki>
+</topic>
+<topic>
+	<number>15</number>
+	<title>ara_pacis</title>
+	<latitude>41.906418</latitude>
+	<longitude>12.475513</longitude>
+	<wiki>http://en.wikipedia.org/wiki/Ara_Pacis</wiki>
+</topic>
+<topic>
+	<number>16</number>
+	<title>arc_de_triomphe</title>
+	<latitude>48.8738</latitude>
+	<longitude>2.295</longitude>
+	<wiki>http://en.wikipedia.org/wiki/Arc_de_Triomphe</wiki>
+</topic>
+<topic>
+	<number>17</number>
+	<title>aztec_ruins</title>
+	<latitude>36.835837</latitude>
+	<longitude>-107.998124</longitude>
+	<wiki>http://en.wikipedia.org/wiki/Aztec_Ruins_National_Monument</wiki>
+</topic>
+<topic>
+	<number>18</number>
+	<title>berlin_cathedral</title>
+	<latitude>52.51967</latitude>
+	<longitude>13.401111</longitude>
+	<wiki>http://en.wikipedia.org/wiki/Berlin_Cathedral</wiki>
+</topic>
+<topic>
+	<number>19</number>
+	<title>bok_tower_gardens</title>
+	<latitude>27.935000</latitude>
+	<longitude>-81.576944</longitude>
+	<wiki>http://en.wikipedia.org/wiki/Bok_Tower_Gardens</wiki>
+</topic>
+<topic>
+	<number>20</number>
+	<title>brandenburg_gate</title>
+	<latitude>52.516272</latitude>
+	<longitude>13.377722</longitude>
+	<wiki>http://en.wikipedia.org/wiki/Brandenburg_Gate</wiki>
+</topic>
+<topic>
+	<number>21</number>
+	<title>cabrillo</title>
+	<latitude>32.673056</latitude>
+	<longitude>-117.238611</longitude>
+	<wiki>http://en.wikipedia.org/wiki/Cabrillo_National_Monument</wiki>
+</topic>
+<topic>
+	<number>22</number>
+	<title>casa_batllo</title>
+	<latitude>41.391667</latitude>
+	<longitude>2.165</longitude>
+	<wiki>http://en.wikipedia.org/wiki/Casa_Batll%C3%B3</wiki>
+</topic>
+<topic>
+	<number>23</number>
+	<title>casa_rosada</title>
+	<latitude>-34.608056</latitude>
+	<longitude>-58.370278</longitude>
+	<wiki>http://en.wikipedia.org/wiki/Casa_Rosada</wiki>
+</topic>
+<topic>
+	<number>24</number>
+	<title>castillo_de_san_marcos</title>
+	<latitude>29.897778</latitude>
+	<longitude>-81.311389</longitude>
+	<wiki>http://en.wikipedia.org/wiki/Castillo_de_San_Marcos</wiki>
+</topic>
+<topic>
+	<number>25</number>
+	<title>chartres_cathedral</title>
+	<latitude>48.447222</latitude>
+	<longitude>1.487778</longitude>
+	<wiki>http://en.wikipedia.org/wiki/Chartres_Cathedral</wiki>
+</topic>
+<topic>
+	<number>26</number>
+	<title>chichen_itza</title>
+	<latitude>20.6829</latitude>
+	<longitude>-88.56865</longitude>
+	<wiki>http://en.wikipedia.org/wiki/Chichen_Itza</wiki>
+</topic>
+<topic>
+	<number>27</number>
+	<title>christ_the_redeemer_rio</title>
+	<latitude>-22.951667</latitude>
+	<longitude>-43.210833</longitude>
+	<wiki>http://en.wikipedia.org/wiki/Christ_the_Redeemer_%28statue%29</wiki>
+</topic>
+<topic>
+	<number>28</number>
+	<title>civic_center_san_francisco</title>
+	<latitude>37.779167</latitude>
+	<longitude>-122.415833</longitude>
+	<wiki>http://en.wikipedia.org/wiki/Civic_Center,_San_Francisco,_California</wiki>
+</topic>
+<topic>
+	<number>29</number>
+	<title>cologne_cathedral</title>
+	<latitude>50.941111</latitude>
+	<longitude>6.957222</longitude>
+	<wiki>http://en.wikipedia.org/wiki/Cologne_Cathedral</wiki>
+</topic>
+<topic>
+	<number>30</number>
+	<title>colosseum</title>
+	<latitude>41.89018</latitude>
+	<longitude>12.492313</longitude>
+	<wiki>http://en.wikipedia.org/wiki/Colosseum</wiki>
+</topic>
+</topics>
