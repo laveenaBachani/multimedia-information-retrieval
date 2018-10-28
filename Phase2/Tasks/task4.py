@@ -16,7 +16,7 @@ def parse_args_process():
 
 args = parse_args_process()
 obj = VisDescParser()
-obj.getTask5Items(args.loc_id, args.k,args.model)
+obj.getTask4Items(args.loc_id, args.k,args.model)
 # obj.getTask5Items("1",5,"LDA")
 # out = obj.getTask5Items("LDA",2,"1","CM",5)
 # print(out)

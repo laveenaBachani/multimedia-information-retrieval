@@ -1,11 +1,11 @@
 import xml.etree.ElementTree as ET
 import numpy as np
 import argparse
-import get_latent_features
-from APIs import generic_apis
+from Phase2.Modules import get_latent_features
+from Phase2.APIs import generic_apis
 from collections import OrderedDict
 
-tree = ET.parse('../Testdata/devset/devset_topics.xml')  # to parse location XML
+tree = ET.parse('../Data/devset_topics.xml')  # to parse location XML
 root = tree.getroot()  # root node
 mapping={}  # dictionary for location id to location name mapping
 c = 0
@@ -44,10 +44,12 @@ algtype = algotype(modelname)
 
 # to get latent symantics for all locations and store in dictionary with location as key
 allLocationdata = {}
-mainfolder = "..\Testdata\devset\descvis\img"
+mainfolder = "../Data/descvis/img"
 for id in mapping:
     filename2 = id + ' ' + modelname + ".csv"
-    allLocationdata[id] = get_latent_features.get_latent_features_vis_disc(mainfolder + "\\" + filename2, dmmodelname, int(nooffeatures))
+    allLocationdata[id], comp = get_latent_features.get_latent_features_vis_disc(mainfolder + "/" + filename2, dmmodelname, int(nooffeatures))
+    print("Latent symantics for ", id, "\n", comp)
+# display latent symantics
 
 #  search inputted image id
 
