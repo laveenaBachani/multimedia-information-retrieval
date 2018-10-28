@@ -1,8 +1,8 @@
 import xml.etree.ElementTree as ET
 import numpy as np
 import argparse
-from Modules import get_latent_features
-from APIs import generic_apis
+from Phase2.Modules import get_latent_features
+from Phase2.APIs import generic_apis
 from collections import OrderedDict
 np.set_printoptions(threshold=np.nan)
 
