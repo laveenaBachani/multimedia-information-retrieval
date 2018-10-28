@@ -121,14 +121,13 @@ class VisDescParser:
             k) + "\n")
         f.close()
         vd_model_list = ["CM", "CM3x3", "CN", "CN3x3", "CSD", "GLRLM", "GLRLM3x3", "HOG", "LBP", "LBP3x3"]
-        # vd_model_list = ["CM", "CM3x3", "CN", "CN3x3"]
+
         score_list = {}
-        # vd_model_weight = [9, 81, 11, 99, 64, 44, 396, 81, 16, 144]
+
         print("Calculating rank of locations for each visual descriptor model-")
         for vd_model in vd_model_list:
             out, locInKSem, KSemInFet = self.getTask4Items(dimRedAlgo, k, loc_id, vd_model, 30)
             self.write_latent_semantics_task5(vd_model, locInKSem, KSemInFet)
-            # print("VD Model " + vd_model + " -")
             score_list[vd_model] = out
 
         print("Calculating cumulative rank -")
@@ -141,7 +140,7 @@ class VisDescParser:
             for mod in score_list:
                 for var in score_list[mod]:
                     if location == var[0]:
-                        rank_sum += score_list[mod].index(var) + 1
+                        rank_sum += score_list[mod].index(var)
                         break
             location_with_model_scores[location] = rank_sum / len(vd_model_list)
 
@@ -159,5 +158,3 @@ class VisDescParser:
             print("\t" + str(loc) + "\t\t\t " + str(location_with_model_scores_sorted[i][1]))
             f.write("\t" + str(loc) + "\t\t\t " + str(location_with_model_scores_sorted[i][1])+"\n")
         f.close()
-# out = obj.getTask5Items("LDA",2,"1","CM",5)
-# print(out)
