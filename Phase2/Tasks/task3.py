@@ -98,8 +98,11 @@ for location in allLocationdata:
     elif algtype == "eucledean":
         distance = generic_apis.eucledian_distance(curr_loc_feature, input_features)
 
-    avg = distance.sum(0)
-    avg = avg/distance.size
+    #avg = distance.sum(0)
+    #avg = avg/distance.size
+    avg = np.min(distance)
+    if algtype == "cosine":
+        avg = np.max(distance)
     loc_to_similarity_avg[location] = avg
     img_to_distance = np.vstack((curr_loc_imageids, distance)).T
     if alldistance.size == 0:
