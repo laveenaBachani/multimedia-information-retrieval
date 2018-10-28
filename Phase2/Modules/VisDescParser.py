@@ -25,6 +25,12 @@ class VisDescParser:
         allLocationDetails = locInfoParser.parse_xml_topic(topicsFilePath)
         return allLocationDetails
 
+    def chi_squared(self, vector, individual_vector):
+        numerator = (vector - individual_vector) ** 2
+        denominator = vector + individual_vector
+        npdistance = np.divide(numerator, denominator, where=denominator!=0)
+        return np.sum(npdistance, axis=1)
+
 
     def getTask4Items(self, dimRedAlgo, numLatSemFeat, givlocId, visDescModelName, numSimLocReq):
         allLocationDetails = self.getAllLocationDetails()
@@ -64,13 +70,13 @@ class VisDescParser:
             if algo == self.ALGO_COSINE_SIMILARITY:
                 imgPairDistSim = generic_apis.consine_similarity(location2features, individual_vector)
             elif algo == self.ALGO_CHI_SQUARE_DISTANCE:
-                imgPairDistSim = generic_apis.chi_squared(location2features, individual_vector)
+                imgPairDistSim = self.chi_squared(location2features, individual_vector)
             else:
                 imgPairDistSim = generic_apis.eucledian_distance(location2features, individual_vector)
             maxSimilarity = np.min(imgPairDistSim)
             if algo == self.ALGO_COSINE_SIMILARITY:
                 maxSimilarity = np.max(imgPairDistSim)
-            dist += np.sum(maxSimilarity)
+            dist += maxSimilarity#np.sum(maxSimilarity)
             count += 1
         avgDist = dist / count
         return avgDist
