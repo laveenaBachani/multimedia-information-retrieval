@@ -15,11 +15,11 @@ def parse_args_process():
     return args
 
 def clean_ouput():
-    f = open("taskoutput.txt", "w+")
+    f = open("task4output.txt", "w+")
     f.close()
 
 def write_output(line):
-    f = open("taskoutput.txt", "a+")
+    f = open("task4output.txt", "a+")
     f.write(line+"\n")
     f.close()
 
