@@ -4,15 +4,20 @@ import argparse
 from Phase2.Modules import get_latent_features
 from Phase2.APIs import generic_apis
 from collections import OrderedDict
+np.set_printoptions(threshold=np.nan)
 
 tree = ET.parse('../Data/devset_topics.xml')  # to parse location XML
 root = tree.getroot()  # root node
-mapping={}  # dictionary for location id to location name mapping
+mapping = {}  # dictionary for location id to location name mapping
 c = 0
 for child1 in root:
             id = root[c][0].text
             mapping[root[c][1].text] = id
             c = c + 1
+
+# clean_output file
+f = open("task3output.txt", "w+")
+f.close()
 
 # input from user
 def parse_args_process():
@@ -25,16 +30,21 @@ def parse_args_process():
     argument_parse.add_argument('--input_id', help='The image id', type=str, required=True)
     args = argument_parse.parse_args()
     return args
+
+
 args = parse_args_process()
 modelname = args.model_name
 nooffeatures = args.no_of_features
 dmmodelname = args.dm_model_name
 inputid=args.input_id
 
+f = open("task3output.txt", "a+")
+f.write(" Input: model_name -> " + modelname + " no_of_features-> " + str(nooffeatures) + " dm_model_name -> " + dmmodelname + " image_input_id -> " +inputid )
+
 def algotype(modelname):  # function to select similarity algorithm
-    if modelname in {"CN", "CN3x3", "CM3x3", "GLRLM","CM"}:
+    if modelname in {"CN", "CN3x3", "CM3x3", "GLRLM"}:
         algtype = "eucledean"
-    elif modelname in {"GLRLM3x3", "LBP3x3", "LBP" }:
+    elif modelname in {"GLRLM3x3", "LBP3x3", "LBP", "CM"}:
         algtype = "chisquare"
     elif modelname in {"HOG", "CSD"}:
         algtype = "cosine"
@@ -48,11 +58,14 @@ mainfolder = "../Data/descvis/img"
 for id in mapping:
     filename2 = id + ' ' + modelname + ".csv"
     allLocationdata[id], comp = get_latent_features.get_latent_features_vis_disc(mainfolder + "/" + filename2, dmmodelname, int(nooffeatures))
-    print("Latent symantics for ", id, "\n", comp)
-# display latent symantics
+    print("\n.....................Latent semantics * old features for location", id, ".............................\n", comp )
+    f.write(" \n\n................ Latent semantics * old features for location " + id + "...........................\n" + np.array2string(comp))
+
+for id in allLocationdata:
+    print("\n.....................object * Latent semantics for location", id, ".............................\n", allLocationdata[id])
+    f.write(" \n\n................ object * Latent semantics for location " + id + "...........................\n" + np.array2string(allLocationdata[id]))
 
 #  search inputted image id
-
 found = 0
 for id in allLocationdata:
     imageids = allLocationdata[id][:, 0:1]
@@ -65,7 +78,8 @@ for id in allLocationdata:
     if found == 1:
         break
 if found == 0:
-    print("Inputted image id not found in dataset")
+    print("\n ........Inputted image id not found in dataset........")
+    f.write(" \n ............Inputted image id not found in dataset..........")
     exit()
 
 alldistance=np.array([])
@@ -88,8 +102,6 @@ for location in allLocationdata:
     avg = avg/distance.size
     loc_to_similarity_avg[location] = avg
     img_to_distance = np.vstack((curr_loc_imageids, distance)).T
-
-
     if alldistance.size == 0:
         alldistance = img_to_distance
     else:
@@ -101,20 +113,27 @@ else:
     alldistance = alldistance[alldistance[:, 1].argsort()]
 
 most_similar_images = alldistance[:5, :]
-print("5 most similar images are <imageid, similarity score>")
+print("\n..........5 most similar images are <imageid, similarity score>.............")
+f.write("\n\n.........5 most similar images are <imageid, similarity score>............")
+
 for row in most_similar_images:
     print(str(int(row[0])), "->", row[1])
+    f.write("\n" + str(int(row[0])) + "->" + str(row[1]))
 
 # sort location dictionary
 if algtype == "cosine":
     loc_to_similarity_avg = OrderedDict(sorted(loc_to_similarity_avg.items(), key=lambda x: x[1], reverse=True))
 else:
     loc_to_similarity_avg = OrderedDict(sorted(loc_to_similarity_avg.items(), key=lambda x: x[1]))
-print("5 most similar locations are <location id, similarity score>")
+print("\n..........5 most similar locations are <location id, similarity score>..........")
+f.write("\n\n..........5 most similar locations are <location id, similarity score>...........")
+
 counter = 1
 for loc in loc_to_similarity_avg:
     if counter <= 5:
         print(int(mapping[loc]), "->", loc_to_similarity_avg[loc])
+        f.write("\n" + str(int(mapping[loc])) + "->" + str(loc_to_similarity_avg[loc]))
         counter = counter+1
     elif counter > 5:
         break
+f.close()

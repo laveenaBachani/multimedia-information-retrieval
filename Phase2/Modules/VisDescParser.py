@@ -25,6 +25,12 @@ class VisDescParser:
         allLocationDetails = locInfoParser.parse_xml_topic(topicsFilePath)
         return allLocationDetails
 
+    def chi_squared(self, vector, individual_vector):
+        numerator = (vector - individual_vector) ** 2
+        denominator = vector + individual_vector
+        npdistance = np.divide(numerator, denominator, where=denominator!=0)
+        return np.sum(npdistance, axis=1)
+
 
     def getTask4Items(self, dimRedAlgo, numLatSemFeat, givlocId, visDescModelName, numSimLocReq):
         allLocationDetails = self.getAllLocationDetails()
@@ -39,15 +45,14 @@ class VisDescParser:
                 KSemInFet = comp
 
         allLocationsMatch = {}
-
-        for locationId in allLocationDetails:
-            if locationId != givlocId:
-                allLocationsMatch[locationId] = self.getLocationSimilarity(allLocationReqSemFeat, givlocId, locationId, visDescModelName)
         algo = self.modelWiseDistSimAlgo(visDescModelName)
+        for locationId in allLocationDetails:
+            allLocationsMatch[locationId] = self.getLocationSimilarity(allLocationReqSemFeat, givlocId, locationId, algo)
         sorted_list = [x for x in allLocationsMatch.items()]
         sorted_list.sort(key=lambda x: x[1])  # sort by value
         if algo == self.ALGO_COSINE_SIMILARITY:
             sorted_list.reverse()
+
         return sorted_list[:numSimLocReq], locInKSem, KSemInFet
 
     def getLocationSimilarity(self, allLocationsData, locationId1, locationId2, algo):
@@ -65,11 +70,14 @@ class VisDescParser:
             if algo == self.ALGO_COSINE_SIMILARITY:
                 imgPairDistSim = generic_apis.consine_similarity(location2features, individual_vector)
             elif algo == self.ALGO_CHI_SQUARE_DISTANCE:
-                imgPairDistSim = generic_apis.chi_squared(location2features, individual_vector)
+                imgPairDistSim = self.chi_squared(location2features, individual_vector)
             else:
                 imgPairDistSim = generic_apis.eucledian_distance(location2features, individual_vector)
-            dist += np.sum(imgPairDistSim)
-            count += imgPairDistSim.shape[0]
+            maxSimilarity = np.min(imgPairDistSim)
+            if algo == self.ALGO_COSINE_SIMILARITY:
+                maxSimilarity = np.max(imgPairDistSim)
+            dist += maxSimilarity#np.sum(maxSimilarity)
+            count += 1
         avgDist = dist / count
         return avgDist
 
@@ -113,14 +121,13 @@ class VisDescParser:
             k) + "\n")
         f.close()
         vd_model_list = ["CM", "CM3x3", "CN", "CN3x3", "CSD", "GLRLM", "GLRLM3x3", "HOG", "LBP", "LBP3x3"]
-        # vd_model_list = ["CM", "CM3x3", "CN", "CN3x3"]
+
         score_list = {}
-        # vd_model_weight = [9, 81, 11, 99, 64, 44, 396, 81, 16, 144]
+
         print("Calculating rank of locations for each visual descriptor model-")
         for vd_model in vd_model_list:
             out, locInKSem, KSemInFet = self.getTask4Items(dimRedAlgo, k, loc_id, vd_model, 30)
             self.write_latent_semantics_task5(vd_model, locInKSem, KSemInFet)
-            # print("VD Model " + vd_model + " -")
             score_list[vd_model] = out
 
         print("Calculating cumulative rank -")
@@ -133,7 +140,7 @@ class VisDescParser:
             for mod in score_list:
                 for var in score_list[mod]:
                     if location == var[0]:
-                        rank_sum += score_list[mod].index(var) + 1
+                        rank_sum += score_list[mod].index(var)
                         break
             location_with_model_scores[location] = rank_sum / len(vd_model_list)
 
@@ -151,5 +158,3 @@ class VisDescParser:
             print("\t" + str(loc) + "\t\t\t " + str(location_with_model_scores_sorted[i][1]))
             f.write("\t" + str(loc) + "\t\t\t " + str(location_with_model_scores_sorted[i][1])+"\n")
         f.close()
-# out = obj.getTask5Items("LDA",2,"1","CM",5)
-# print(out)

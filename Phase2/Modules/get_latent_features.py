@@ -19,4 +19,5 @@ def get_latent_features_vis_disc(filename_with_path, model, k):
     else:
         print("Wrong Dimension Reduction Model - " + model)
         return np.empty(0)
+    latent_l_features = generic_apis.normalize_vector(latent_l_features)
     return np.concatenate((objects, latent_l_features), axis=1),comp
