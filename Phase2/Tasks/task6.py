@@ -81,7 +81,7 @@ def main(args):
     task_6_data = 'task_6_data'
 
     k = int(args.k)
-
+    task_6_data = task_6_data + '_' + str(k)
     if os.path.exists(task_6_data + '.npy'):
         arr = np.load(task_6_data + '.npy')
     else:
