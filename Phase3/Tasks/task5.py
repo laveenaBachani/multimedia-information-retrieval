@@ -85,8 +85,7 @@ class HashTable:
             for j in range(len(input_vectors)):
                 self.hashes_dict[i][hashes[i][j]].add(label[j])
                 max_check = max(max_check, len(self.hashes_dict[i][hashes[i][j]]))
-            print(max_check)
-
+            
     def get_item(self, input_vectors):
         hashes = self.generate_hash(input_vectors)
 
