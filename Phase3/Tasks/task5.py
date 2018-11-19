@@ -5,7 +5,11 @@ import numpy as np
 
 np.random.seed(50)
 
-
+#Functions to validate if the data is correct and if all the images has all the modals.
+#return types
+#ans is the 2d image-feature vector, where feature is all the concatenated feature modals
+#image_names-> image- id map where id is the index of that image in the ans.
+#original_image -> Sorted order of the image names 
 def validate_data():
     location = '../Data/img'
     dictionary = defaultdict(lambda: defaultdict(lambda: set()))
@@ -53,7 +57,6 @@ def validate_data():
                             map(lambda x: float(x), data[1:]))
                     line = f.readline()
     ans = np.array(ans)
-
     return ans, image_names, original_names
 
 
@@ -99,9 +102,13 @@ def euclidean_dst(vector, original_vector):
 
 
 if __name__ == '__main__':
+    #number of hashes per layer
+    
     k = 3
     similarity_with = '2482756687'
+    #number of similar images
     t = 5
+    #number of layers
     l = 4
     ans, image_names, names_sorted = validate_data()
     layers = []
