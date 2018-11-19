@@ -90,6 +90,7 @@ def knn():
             del names[id]
         vector = np.array(vector)
         lbls = np.array(labels)
+        f = open('../Data/KNN_Output.txt', 'w')
         for id in names:
             distances = euclidean_dst(vector, matrix[names[id]])
             distindex = np.argpartition(distances, 6)[:6]
@@ -101,13 +102,16 @@ def knn():
                     ans.append((x[0], x[1]))
                 else:
                     break
-            print(id, ans)
+            f.write('{0} {1}\n'.format(id, ans))
+        f.flush()
+        f.close()
 
 
 def personalized_page_rank():
     data = np.load('../Data/adj_matrix_new.npy')
     images = []
     d = {}
+
     with open('../Data/devset_textTermsPerImage.txt') as f:
         line = f.readline()
         i = 0
@@ -119,10 +123,12 @@ def personalized_page_rank():
             i += 1
     classes = defaultdict(lambda: set())
     labels = []
+    dont_classify = set()
     with open('../Data/Classification_Input.txt') as f:
         line = f.readline()
         while line:
             name, label = line.split('\n')[0].split('\t')
+            dont_classify.add(d[name])
             classes[label].add(d[name])
             line = f.readline()
     ans = []
@@ -135,10 +141,14 @@ def personalized_page_rank():
         labels.append(x)
     ans = np.array(ans)
     indexes = np.argmax(ans, axis=0)
-    classification = []
+    f = open('../Data/PPR_Output.txt', 'w')
     for i, x in enumerate(indexes):
-        print(images[i], labels[x])
+        if i not in dont_classify:
+            f.write('{0} {1}\n'.format(images[i], labels[x]))
+    f.flush()
+    f.close()
 
 
 if __name__ == '__main__':
+    knn()
     personalized_page_rank()
