@@ -2,14 +2,18 @@ import argparse
 from os import listdir
 from collections import defaultdict
 import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+import math
 
 np.random.seed(50)
 
-#Functions to validate if the data is correct and if all the images has all the modals.
-#return types
-#ans is the 2d image-feature vector, where feature is all the concatenated feature modals
-#image_names-> image- id map where id is the index of that image in the ans.
-#original_image -> Sorted order of the image names 
+
+# Functions to validate if the data is correct and if all the images has all the modals.
+# return types
+# ans is the 2d image-feature vector, where feature is all the concatenated feature modals
+# image_names-> image- id map where id is the index of that image in the ans.
+# original_image -> Sorted order of the image names
 def validate_data():
     location = '../Data/img'
     dictionary = defaultdict(lambda: defaultdict(lambda: set()))
@@ -60,6 +64,7 @@ def validate_data():
     return ans, image_names, original_names
 
 
+# One Hash Layer
 class HashTable:
     def __init__(self, number_hashes, hash_size, input_dimensions):
         self.hash_size = hash_size
@@ -101,33 +106,69 @@ def euclidean_dst(vector, original_vector):
     return np.sum((vector - original_vector) ** 2, axis=1) ** 0.5
 
 
+def parse_args_process():
+    argument_parse = argparse.ArgumentParser()
+    argument_parse.add_argument('--k', help='The number of hash layers per layer', type=int, required=True)
+    argument_parse.add_argument('--l', help='The number of layers', type=int, required=True)
+    args = argument_parse.parse_args()
+    return args
+
+
 if __name__ == '__main__':
-    #number of hashes per layer
-    
-    k = 3
-    similarity_with = '2482756687'
-    #number of similar images
-    t = 5
-    #number of layers
-    l = 4
+    # number of hashes per layer
+    args = parse_args_process()
+    k = args.k
+    # similarity_with = '2482756687'
+    # number of similar images
+    # t = 5
+    # number of layers
+    l = args.l
     ans, image_names, names_sorted = validate_data()
     layers = []
-    for _ in range(t):
-        hash_table = HashTable(2, 40, ans.shape[1])
+    for _ in range(l):
+        hash_table = HashTable(2, 20, ans.shape[1])
         hash_table.set_item(ans, names_sorted)
         layers.append(hash_table)
+    processing_required = input('Do you want to find something similar(y/n)')
+    while processing_required == 'y':
+        similarity_with = input('Enter the image id')
+        if similarity_with not in image_names:
+            print('Following image id does not exist')
+            continue
+        t = int(input('Enter the number of similar images you want'))
 
-    similarity_indexes = set()
-    vector = ans[image_names[similarity_with]].reshape(1, ans.shape[1])
-    for i in range(t):
-        temp = layers[i].get_item(vector)
-        similarity_indexes = similarity_indexes | temp
+        vector = ans[image_names[similarity_with]].reshape(1, ans.shape[1])
+        similarity_indexes = set()
+        for i in range(l):
+            temp = layers[i].get_item(vector)
+            similarity_indexes = similarity_indexes | temp
+        vectors = np.take(ans, list(similarity_indexes), axis=0)
+        labels = np.take(names_sorted, list(similarity_indexes))
+        dst = euclidean_dst(vectors, vector)
+        print(len(dst))
+        temp_ans = np.argpartition(dst, min(t, len(dst) - 1))[:min(t, len(dst))]
+        ans_labels = np.take(labels, temp_ans)
+        fig = plt.figure()
+        n = math.ceil(len(ans_labels) / 2)
+        for i in range(len(ans_labels)):
+            img = mpimg.imread('../Data/images/{0}.jpg'.format(ans_labels[i]))
+            plt.subplot(n, 2, i + 1)
+            plt.imshow(img)
+        plt.show()
+        ans_distance = np.take(dst, temp_ans)
+        processing_required = input('Do you want to find something similar(y/n)')
 
-    vectors = np.take(ans, list(similarity_indexes), axis=0)
-    labels = np.take(names_sorted, list(similarity_indexes))
-    dst = euclidean_dst(vectors, vector)
-    ans = np.argpartition(dst, t)[:t]
-    ans_labels = np.take(labels, ans)
-    ans_distance = np.take(dst, ans)
-    print(ans_labels)
-    print(ans_distance)
+    # similarity_indexes = set()
+    # vector = ans[image_names[similarity_with]].reshape(1, ans.shape[1])
+    # for i in range(t):
+    #     temp = layers[i].get_item(vector)
+    #     similarity_indexes = similarity_indexes | temp
+    #
+    # vectors = np.take(ans, list(similarity_indexes), axis=0)
+    # labels = np.take(names_sorted, list(similarity_indexes))
+    # dst = euclidean_dst(vectors, vector)
+    # ans = np.argpartition(dst, t)[:t]
+    # ans_labels = np.take(labels, ans)
+    # ans_distance = np.take(dst, ans)
+    # print(ans_labels)
+    # print(ans_distance)

@@ -2,6 +2,7 @@ import numpy as np
 from os import listdir
 from collections import defaultdict, Counter
 from scipy import stats
+import json
 
 
 def pageRank(G, mover, s=0.85, maxerr=0.001):
@@ -81,7 +82,7 @@ def knn():
         line = f.readline()
         vector = []
         labels = []
-
+        classification_dict = defaultdict(lambda: [])
         while line:
             id, label = line.split('\n')[0].split('\t')
             vector.append(matrix[names[id]])
@@ -90,7 +91,8 @@ def knn():
             del names[id]
         vector = np.array(vector)
         lbls = np.array(labels)
-        f = open('../Data/KNN_Output.txt', 'w')
+        f = open('../Data/task6_knn.json', 'w')
+        classification_file = open('../Data/KNN_Output.txt', 'w')
         for id in names:
             distances = euclidean_dst(vector, matrix[names[id]])
             distindex = np.argpartition(distances, 6)[:6]
@@ -100,11 +102,18 @@ def knn():
             for x in labels:
                 if x[1] == labels[0][1]:
                     ans.append((x[0], x[1]))
+                    classification_dict[x[0]].append('images/{0}.jpg'.format(id))
                 else:
                     break
-            f.write('{0} {1}\n'.format(id, ans))
+            classification_file.write('{0} {1}\n'.format(id, ans))
+        classification_file.flush()
+        classification_file.close()
+        f.write(json.dumps(classification_dict))
         f.flush()
         f.close()
+        #     f.write('{0} {1}\n'.format(id, ans))
+        # f.flush()
+        # f.close()
 
 
 def personalized_page_rank():
@@ -141,10 +150,16 @@ def personalized_page_rank():
         labels.append(x)
     ans = np.array(ans)
     indexes = np.argmax(ans, axis=0)
+    json_output = open('../Data/task6_ppr.json', 'w')
+    classification_dict = defaultdict(lambda: [])
     f = open('../Data/PPR_Output.txt', 'w')
     for i, x in enumerate(indexes):
         if i not in dont_classify:
             f.write('{0} {1}\n'.format(images[i], labels[x]))
+            classification_dict[labels[x]].append('images/' + images[i] + '.jpg')
+    json_output.write(json.dumps(classification_dict))
+    json_output.flush()
+    json_output.close()
     f.flush()
     f.close()
 
