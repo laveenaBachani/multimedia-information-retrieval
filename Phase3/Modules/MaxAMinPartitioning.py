@@ -67,11 +67,9 @@ class MaxAMinPartitioning:
     def get_clusters(self, graph, k):
         leaders = []
         numNodes = graph.shape[0]
-        print(numNodes)
         graph = self.getSymmetricGraph(graph)
 
         firstLeader = random.randint(0, numNodes-1)
-        firstLeader = 6
         leaders.append(firstLeader)
         firstLeader_dist = self.dijkstra(graph, firstLeader)
         leaders_dist = np.array([firstLeader_dist])
@@ -81,8 +79,7 @@ class MaxAMinPartitioning:
         for i in range(k-1):
 
             avg_dist = np.sum(leaders_dist,axis=0)/leaders_dist.shape[0]
-            #new_leader = random.choice(availableNodes)
-            new_leader = 2
+            new_leader = random.choice(availableNodes)
             new_leader_dist = avg_dist[new_leader]
 
             for node in availableNodes:
@@ -92,14 +89,12 @@ class MaxAMinPartitioning:
                     new_leader = node
                     new_leader_dist = avg_dist[node]
 
-            print("i:",i," new_leader_dist:",new_leader_dist)
             leaders.append(new_leader)
             new_leader_all_dist = self.dijkstra(graph, new_leader)
             leaders_dist = np.append(leaders_dist, np.array([new_leader_all_dist]), axis=0)
             availableNodes = [x for x in availableNodes if x not in leaders]
 
         print(leaders)
-        print(leaders_dist)
         print("total connected components:", len(leaders))
         leaders_cluster = {}
         for leader in leaders:
@@ -122,14 +117,10 @@ class MaxAMinPartitioning:
             leaderIndex = leaders.index(nearestLeader)
             leaders_cluster = self.insertInCluster(leaders_cluster,node,nearestLeader,leaders_dist, leaderIndex)
 
-
         print(leaders_cluster)
-        for leader_index, leader in enumerate(leaders):
-            for i,v in enumerate(leaders_cluster[leader]):
-                print("leader:",leader," i:",i," v:",v, " dist:",leaders_dist[leader_index][v])
+
 
     def insertInCluster(self,leaders_cluster, insertNode, leader, leaders_dist, leaderIndex):
-        #print("in:", insertNode, " leader:", leader, "leaderIndex", leaderIndex)
         inserted = False
         insertNodeDist = leaders_dist[leaderIndex][insertNode]
         for i, node in enumerate(leaders_cluster[leader]):
@@ -137,17 +128,12 @@ class MaxAMinPartitioning:
             nodeDist = leaders_dist[leaderIndex][node]
             if insertNodeDist < nodeDist:
                 leaders_cluster[leader].insert(i, insertNode)
-                print(" leader:", leader, " insertNode:", insertNode, " insertNodeDist:",insertNodeDist," i:",i)
                 inserted = True
                 break
-        #print("innnn:", insertNode, " leader:", leader, "insertNodeDist:",insertNodeDist)
 
         if inserted is False:
             leaders_cluster[leader].append(insertNode)
-            #if insertNodeDist < self.max_dist:
-            print(" leader:", leader, " insertNode:", insertNode, " insertNodeDist:", insertNodeDist, " end i:", len(leaders_cluster[leader]))
-        print(leaders_dist[leaderIndex])
-        print(leaders_cluster[leader])
+
         return leaders_cluster
 
     def getLessCount(self, arr):
@@ -175,7 +161,7 @@ class MaxAMinPartitioning:
     def getSymmetricGraph(self,graph):
         for i in range(graph.shape[0]):
             if i % 1000 == 0:
-                print(i)
+                print("symmetric:",i)
             for j in range(graph.shape[1]):
                 if graph[i][j] == 1:
                     graph[j][i] = 1
