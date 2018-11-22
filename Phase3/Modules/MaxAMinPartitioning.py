@@ -38,12 +38,12 @@ class MaxAMinPartitioning:
         dist[srcNodeId] = 0
         # Find shortest path for all vertices
         #print("firstiter:",self.getLessCount(dist))
-        #print("id:",srcNodeId," connectedNodes:", self.getConnectedNodes(graph,srcNodeId))
+        #print("id:",srcNodeId," connectedNodes:", self.getDirectlyConnectedNodes(graph,srcNodeId))
         for count in range(numNodes):
             # Pick the minimum distance vertex from the set of vertices not
             # yet processed. u is always equal to src in the first iteration.
             u = self.minDistance(dist, sptSet)
-            #print("id:", u, "dist:", dist[u], " connectedNodes:", self.getConnectedNodes(graph, u), " lessNodes:",self.getLessNodes(dist))
+            #print("id:", u, "dist:", dist[u], " connectedNodes:", self.getDirectlyConnectedNodes(graph, u), " lessNodes:",self.getConnectedComponentNodes(dist))
             if u == -1:
                 break
 
@@ -66,87 +66,89 @@ class MaxAMinPartitioning:
 
     def get_clusters(self, graph, k):
         leaders = []
-        #leaders_dist = [np.zeros(graph.shape[0])]  #np.array(leaders)
-        #leaders_dist = np.array(leaders_dist)
-
-        for i in range(graph.shape[0]):
-            if i % 1000 == 0:
-                print(i)
-            for j in range(graph.shape[1]):
-                if graph[i][j] == 1:
-                    graph[j][i] = 1
         numNodes = graph.shape[0]
+        print(numNodes)
+        graph = self.getSymmetricGraph(graph)
 
         firstLeader = random.randint(0, numNodes-1)
-        #firstLeader = 29
+        firstLeader = 6
         leaders.append(firstLeader)
-        print(np.sum(graph,axis=1))
         firstLeader_dist = self.dijkstra(graph, firstLeader)
-        #print(firstLeader_dist)
-        leaderConnectedNodes = self.getLessNodes(firstLeader_dist)
-        print("leaderId:",firstLeader, "clusterSize:",self.getLessCount(firstLeader_dist),  "leaderConnectedNodes:",leaderConnectedNodes)
         leaders_dist = np.array([firstLeader_dist])
-        leaderConnectedNodes = self.getLessNodes(firstLeader_dist)
         allNodes = list(range(numNodes))
         availableNodes = [x for x in allNodes]
-        # print("newLeader_dist:", firstLeader_dist)
-        #print("leaders_dist:", leaders_dist)
 
-        #for i in range(k-1):
-        i=0
-        while(len(availableNodes)>0):
-            i += 1
-            st = time.time()
-            #ast = time.time()
+        for i in range(k-1):
+
             avg_dist = np.sum(leaders_dist,axis=0)/leaders_dist.shape[0]
-            #at = time.time()-ast
-            #lst = time.time()
-            allleaderallConnectedNodes = [i for i,v in enumerate(avg_dist) if v < self.max_dist]
-            #lt = time.time()-lst
-            # print("avg_dist:", avg_dist)
-            #aast = time.time()
-
-
-            #aat = time.time()-aast
-            #nst = time.time()
-            new_leader = random.choice(availableNodes)
+            #new_leader = random.choice(availableNodes)
+            new_leader = 2
             new_leader_dist = avg_dist[new_leader]
 
             for node in availableNodes:
                 if new_leader_dist >= self.max_dist:
                     break
-                if avg_dist[node] > new_leader_dist:
+                elif avg_dist[node] > new_leader_dist:
                     new_leader = node
                     new_leader_dist = avg_dist[node]
 
-
+            print("i:",i," new_leader_dist:",new_leader_dist)
             leaders.append(new_leader)
-            #nt = time.time()-nst
-            #dst = time.time()
             new_leader_all_dist = self.dijkstra(graph, new_leader)
-            leaderConnectedNodes = self.getLessNodes(new_leader_all_dist)
-            #dt = time.time()-dst
             leaders_dist = np.append(leaders_dist, np.array([new_leader_all_dist]), axis=0)
-            # print("newLeader_dist:", newLeader_dist)
-            # print("leaders_dist:",leaders_dist)
-            for x in leaderConnectedNodes:
-                if x not in availableNodes:
-                    print("Some error occured for node x:",x)
-                    availableNodes = [x for x in availableNodes if x not in leaderConnectedNodes]
-                    print("i:", i, " leaderId:", new_leader, "clusterSize:", self.getLessCount(new_leader_all_dist),
-                          "t:", tt, "totalConnectedNodees:",
-                          len(allleaderallConnectedNodes), "availableNodes:", len(availableNodes))
-                    exit()
-            availableNodes = [x for x in availableNodes if x not in leaderConnectedNodes]
-            tt = time.time()- st
+            availableNodes = [x for x in availableNodes if x not in leaders]
 
-            #print("leaderId:", new_leader, "clusterSize:", self.getLessCount(new_leader_all_dist),"t:",tt,"at:",at,"lt:",lt,"aat:",aat,"nt:",nt,"dt:",dt, "totalConnectedNodees:",len(allleaderallConnectedNodes))
-            print("i:",i," leaderId:", new_leader, "clusterSize:", self.getLessCount(new_leader_all_dist), "t:", tt, "totalConnectedNodees:",
-                  len(allleaderallConnectedNodes),"availableNodes:",len(availableNodes),  "leaderConnectedNodes:",leaderConnectedNodes)
-
-        #print(avg_dist)
         print(leaders)
-        print("total connected components:",len(leaders))
+        print(leaders_dist)
+        print("total connected components:", len(leaders))
+        leaders_cluster = {}
+        for leader in leaders:
+            leaders_cluster[leader] = []
+
+        for node in allNodes:
+            nearestLeader = leaders[0]
+            nearestLeaderDist = leaders_dist[0][node]
+            nearestLeaderClusterSize = len(leaders_cluster[nearestLeader])
+
+            for leaderIndex, leader in enumerate(leaders):
+                distToLeader = leaders_dist[leaderIndex][node]
+                leaderClusterSize = len(leaders_cluster[leader])
+                if distToLeader < nearestLeaderDist:
+                    nearestLeader = leader
+                    nearestLeaderDist = distToLeader
+                elif distToLeader == nearestLeaderDist and leaderClusterSize < nearestLeaderClusterSize:
+                    nearestLeader = leader
+                    nearestLeaderDist = distToLeader
+            leaderIndex = leaders.index(nearestLeader)
+            leaders_cluster = self.insertInCluster(leaders_cluster,node,nearestLeader,leaders_dist, leaderIndex)
+
+
+        print(leaders_cluster)
+        for leader_index, leader in enumerate(leaders):
+            for i,v in enumerate(leaders_cluster[leader]):
+                print("leader:",leader," i:",i," v:",v, " dist:",leaders_dist[leader_index][v])
+
+    def insertInCluster(self,leaders_cluster, insertNode, leader, leaders_dist, leaderIndex):
+        #print("in:", insertNode, " leader:", leader, "leaderIndex", leaderIndex)
+        inserted = False
+        insertNodeDist = leaders_dist[leaderIndex][insertNode]
+        for i, node in enumerate(leaders_cluster[leader]):
+
+            nodeDist = leaders_dist[leaderIndex][node]
+            if insertNodeDist < nodeDist:
+                leaders_cluster[leader].insert(i, insertNode)
+                print(" leader:", leader, " insertNode:", insertNode, " insertNodeDist:",insertNodeDist," i:",i)
+                inserted = True
+                break
+        #print("innnn:", insertNode, " leader:", leader, "insertNodeDist:",insertNodeDist)
+
+        if inserted is False:
+            leaders_cluster[leader].append(insertNode)
+            #if insertNodeDist < self.max_dist:
+            print(" leader:", leader, " insertNode:", insertNode, " insertNodeDist:", insertNodeDist, " end i:", len(leaders_cluster[leader]))
+        print(leaders_dist[leaderIndex])
+        print(leaders_cluster[leader])
+        return leaders_cluster
 
     def getLessCount(self, arr):
         count = 0
@@ -156,20 +158,28 @@ class MaxAMinPartitioning:
         #print("count:", count)
         return count
 
-    def getLessNodes(self, arr):
+    def getConnectedComponentNodes(self, arr):
         list = []
         for i,val in enumerate(arr):
             if (val < self.max_dist):
                  list.append(i)
-        #print("count:", count)
         return list
 
-    def getConnectedNodes(self, graph, u):
+    def getDirectlyConnectedNodes(self, graph, u):
         list = []
         for i in range(graph.shape[1]):
             if graph[u][i] >= 1:
                 list.append(i)
         return list
+
+    def getSymmetricGraph(self,graph):
+        for i in range(graph.shape[0]):
+            if i % 1000 == 0:
+                print(i)
+            for j in range(graph.shape[1]):
+                if graph[i][j] == 1:
+                    graph[j][i] = 1
+        return graph
 
 
 graph = [
