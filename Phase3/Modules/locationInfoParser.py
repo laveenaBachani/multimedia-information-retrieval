@@ -8,6 +8,22 @@ class LocationInfoParser:
 
     TOPICS_INFO_FILE = "devset_topics.xml"
 
+    TXT_PER_IMAGE_FILE = "devset_textTermsPerImage.txt"
+
+    IMG_DIR = "img/"
+
+    CLUSTER_ALGO_MAX_A_MIN_LABEL = "mam"
+
+    CLUSTER_ALGO_SPECTRAL_PARTIONING_LABEL = "sp"
+
+    CLUSTER_ALGO_MAX_A_MIN = "Max_A_Min"
+
+    CLUSTER_ALGO_SPECTRAL_PARTIONING = "Spectral_Partitioning"
+
+    SERVER_URL = "http://localhost:1337/"
+
+    RELATIVE_TASKS_PATH = "../Tasks/"
+
     def get_locations(self):
         topicsFilePath = self.RELATIVE_DEV_SET_PATH + self.TOPICS_INFO_FILE
         tree = ET.parse(topicsFilePath)
@@ -57,7 +73,43 @@ class LocationInfoParser:
                 for topic_id in topics_data:
                     if topics_data[topic_id]['title'] == location_title:
                         topics_data[topic_id]['name'] = location_name
-        return topics_data
+        return
+
+    def get_image_ids_of_node_ids(self):
+        in_file = open(self.RELATIVE_DEV_SET_PATH + self.TXT_PER_IMAGE_FILE, encoding="utf8")
+        ids = []
+        for line in in_file:
+            imageId = line.split()[0]
+            ids.append(imageId)
+
+        return ids
+
+    def get_image_path(self, imageId, location):
+        img_dir = self.IMG_DIR + location + "/"
+        image_path = img_dir + imageId + ".jpg"
+        return image_path
+
+    def get_algo_label(self, cluster_algo):
+        if cluster_algo == self.CLUSTER_ALGO_MAX_A_MIN:
+            algo_label  = self.CLUSTER_ALGO_MAX_A_MIN_LABEL
+        else:
+            algo_label = self.CLUSTER_ALGO_SPECTRAL_PARTIONING_LABEL
+        return algo_label
+
+    def get_ouput_json_path(self, cluster_algo, taskId):
+        algo_label = self.get_algo_label(cluster_algo)
+        json_file_path = self.RELATIVE_DEV_SET_PATH + "task" + str(taskId) + "_" + algo_label + ".json"
+        return json_file_path
+
+    def get_ouput_html_path(self, cluster_algo, taskId):
+        algo_label = self.get_algo_label(cluster_algo)
+        html_file_path = self.SERVER_URL + "task" + str(taskId) + "_" + algo_label + ".html"
+        return html_file_path
+
+    def get_task_ouput_file_path(self, taskId):
+        filePath = self.RELATIVE_TASKS_PATH + "task" + str(taskId) + "output.txt"
+        return filePath
+
 
 if __name__ == '__main__':
     locInfoParser = LocationInfoParser()

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="src/css/swipebox.css">
+</head>
+<body>
+<div class="container row">
+    <div class="col-8"></div>
+    <div class="col-4 row">
+        <div class="col-4" style="margin-top: 2%;">Max A Min Partitioning:</div>
+        <select class="custom-select col-8" id="knn">
+            <option selected>Open this select menu</option>
+        </select>
+    </div>
+    <div class="col-12 row" id="append_knn">
+
+    </div>
+</div>
+<script
+        src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/async/2.6.1/async.min.js"></script>
+<script src="src/js/jquery.swipebox.min.js"></script>
+<script>
+    $(function () {
+        $.ajax({
+            'method': 'get',
+            'url': '/task2_mam.json',
+            'success': function (data) {
+                var keys = Object.keys(data);
+                for (iter in data) {
+                    clusterAndSize = iter+" size:"+data[iter].length
+                    $('#knn').append($("<option></option>")
+                        .attr("value", iter)
+                        .text(clusterAndSize));
+
+                    $('#append_knn').append('<div id="' + iter + '_knn" class="col-12 knns row" style="display: none;"><div>')
+                    data[iter] = data[iter].slice(0, 1000);
+
+
+                    // $('.' + iter + '_knn').swipebox();
+                    $('#knn').change(function () {
+                        $('.knns').css('display', 'none');
+                        $('.knns').html('');
+                        var value = $('#knn').val() + '_knn'
+                        $('#' + value).css('display', 'block')
+                        var iter = $('#knn').val()
+                        for (i in data[iter]) {
+                            $('#' + iter + '_knn').append('<img src="' + data[iter][i]
+                                + '" style="width: 100%;" class="col-2"></img>')
+                        }
+                    })
+                }
+            }
+        })
+    })
+</script>
+</body>
+</html>

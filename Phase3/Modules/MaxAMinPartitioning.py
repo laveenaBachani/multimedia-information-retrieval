@@ -2,6 +2,8 @@ import numpy as np
 import random
 import sys
 import time
+import json
+
 
 class MaxAMinPartitioning:
 
@@ -94,8 +96,8 @@ class MaxAMinPartitioning:
             leaders_dist = np.append(leaders_dist, np.array([new_leader_all_dist]), axis=0)
             availableNodes = [x for x in availableNodes if x not in leaders]
 
-        print(leaders)
-        print("total connected components:", len(leaders))
+        #print(leaders)
+        #print("total connected components:", len(leaders))
         leaders_cluster = {}
         for leader in leaders:
             leaders_cluster[leader] = []
@@ -117,7 +119,14 @@ class MaxAMinPartitioning:
             leaderIndex = leaders.index(nearestLeader)
             leaders_cluster = self.insertInCluster(leaders_cluster,node,nearestLeader,leaders_dist, leaderIndex)
 
-        print(leaders_cluster)
+        #print(leaders_cluster)
+        clusters_dict = {}
+        i=0
+        for leader, leaderClusterNodes in leaders_cluster.items():
+            cluster_label = "cluster_" + str(i + 1)
+            clusters_dict[cluster_label] = leaderClusterNodes
+            i += 1
+        return clusters_dict
 
 
     def insertInCluster(self,leaders_cluster, insertNode, leader, leaders_dist, leaderIndex):
