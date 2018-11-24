@@ -78,13 +78,28 @@ def consine_similarity(vector, individual_vector):
     denominator = p1 * p2
     return numerator / denominator
 
+def consine_similarity_1D(vector, individual_vector):
+    numerator = np.sum(vector * individual_vector)
+    p1 = np.sum(individual_vector ** 2) ** 0.5
+    p2 = np.sum(vector ** 2) ** 0.5
+    denominator = p1 * p2
+    return numerator / denominator
+
 
 def eucledian_distance(vector, individual_vector):
     return np.sum((vector - individual_vector) ** 2, axis=1) ** 0.5
 
 
+def eucledian_distance_1D(vector, individual_vector):
+    return np.sum((vector - individual_vector) ** 2) ** 0.5
+
+
 def chi_squared(vector, individual_vector):
     return np.sum(((vector - individual_vector) ** 2) / np.abs(individual_vector), axis=1)
+
+
+def chi_squared_1D(vector, individual_vector):
+    return np.sum(((vector - individual_vector) ** 2) / np.abs(individual_vector))
 
 
 def return_max_k(distances, k):
