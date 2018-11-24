@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="src/css/swipebox.css">
+</head>
+<body>
+<div class="container row">
+    <div class="col-12"><h1>Similar Images</h1></div>
+
+    <div class="col-12 row" id="append_knn">
+
+    </div>
+    <div class="col-12 row"><h1 class="col-12">Consideration</h1>
+        <div class="col-4">Total</div>
+        <div class="col-8" id="total"></div>
+        <div class="col-4">Unique</div>
+        <div class="col-8" id="unique"></div>
+    </div>
+</div>
+<script
+        src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/async/2.6.1/async.min.js"></script>
+
+<script>
+    function uuidv4() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
+
+    $(function () {
+        $.ajax({
+            'method': 'get',
+            'url': '/task5.json?' + uuidv4(),
+            'success': function (data) {
+                var images = data['images'];
+                var string = '';
+                for (i in images) {
+                    string += '<div class="col-2"><img class="img-thumbnail img-rounded center-block" src="' + images[i]
+                        + '" style="width: 100%;" class="col-12"></img> <div class="col-12">' + images[i].split('images/')[1] + '</div></div>'
+                }
+                $('#append_knn').html('<div class="row col-12"">' + string + '</div>');
+                console.log(data);
+                console.log($('#total'))
+                $('#total').html(data['total']);
+                $('#unique').html(data['unique'])
+            }
+        })
+    })
+</script>
+</body>
+</html>
