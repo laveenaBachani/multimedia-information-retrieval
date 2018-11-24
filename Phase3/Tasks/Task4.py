@@ -103,6 +103,7 @@ def find_k_most_relevant_images(score, k):
     id_score_dic = {}
     for line in in_file:
         ids.append(line.split()[0])
+    ids.sort()
     i = 0
     for val in np.nditer(score):
         id_score_dic[ids[i]] = val

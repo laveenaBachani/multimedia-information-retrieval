@@ -96,9 +96,13 @@ class HashTable:
         ans_set = defaultdict(lambda: 0)
         for i in range(self.number_hashes):
             for j in range(len(input_vectors)):
-
                 for x in self.hashes_dict[i][hashes[i][j]]:
                     ans_set[x] += 1
+        keys = list(ans_set.keys())
+        for x in keys:
+            if ans_set[x] == 1:
+                del ans_set[x]
+        print(ans_set)
         return ans_set
 
 
@@ -128,7 +132,7 @@ if __name__ == '__main__':
     ans, image_names, names_sorted = validate_data()
     layers = []
     for _ in range(l):
-        hash_table = HashTable(args.k, 20, ans.shape[1])
+        hash_table = HashTable(args.k, 30, ans.shape[1])
         hash_table.set_item(ans, names_sorted)
         layers.append(hash_table)
 

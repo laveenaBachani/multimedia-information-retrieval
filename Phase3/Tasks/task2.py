@@ -25,7 +25,7 @@ def parse_args_process():
 def task2():
     args = parse_args_process()
     num_clus = args.c
-    graph = np.load('adjMatrix_new.npy')g
+    graph = np.load('adjMatrix_new.npy')#[0:600,0:600]
     num_nodes = graph.shape[0]
     taskId = 2
     visualizer = vc.Visualizer(taskId)
