@@ -82,6 +82,8 @@ class LocationInfoParser:
             imageId = line.split()[0]
             ids.append(imageId)
 
+        ids.sort()
+
         return ids
 
     def get_image_path(self, imageId, location):
