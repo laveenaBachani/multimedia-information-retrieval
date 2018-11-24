@@ -1,0 +1,62 @@
+
+        <!DOCTYPE html>
+        <html>
+        <head>
+        <style>
+        * {
+            box-sizing: border-box;
+        }
+        #main 
+        {   
+            border: 1px solid #c3c3c3;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-flex-wrap: wrap;
+            flex-wrap: wrap;
+            -webkit-align-content: center;
+            align-content: center;
+        }
+        .column 
+        {
+            float: right;
+            width: 16.66%;
+            padding: 5px;           
+        }
+        /* Clearfix (clear floats) */
+        .row::after 
+        {
+            content: "";
+            clear: both;
+            display: table;
+        }
+        @media screen and (max-width: 500px) 
+        {
+            .column 
+            {
+                width: 100%;
+            }
+        }
+        </style>
+        </head>
+        <body>
+        <h2 align="center">Task 3 Output</h2>
+        <p align="center">5 most dominant images:</p>
+        <div id="main" class="row"> <div class="column"> 
+ <img src="../img/5250933407.jpg"  title=" location : acropolis_athens
+Pagerank : 0.00022924318276366484 " style="width:100%"> 
+ <p align="center"> Image Id:5250933407</p> </div><div class="column"> 
+ <img src="../img/5350744768.jpg"  title=" location : agra_fort
+Pagerank : 0.0002255052058053852 " style="width:100%"> 
+ <p align="center"> Image Id:5350744768</p> </div><div class="column"> 
+ <img src="../img/4764577911.jpg"  title=" location : cn_tower
+Pagerank : 0.00022476000159744674 " style="width:100%"> 
+ <p align="center"> Image Id:4764577911</p> </div><div class="column"> 
+ <img src="../img/5350746618.jpg"  title=" location : agra_fort
+Pagerank : 0.00022255540107089073 " style="width:100%"> 
+ <p align="center"> Image Id:5350746618</p> </div><div class="column"> 
+ <img src="../img/5350735036.jpg"  title=" location : agra_fort
+Pagerank : 0.00022219985999495293 " style="width:100%"> 
+ <p align="center"> Image Id:5350735036</p> </div>
+        </div>
+        </body>
+        </html>
