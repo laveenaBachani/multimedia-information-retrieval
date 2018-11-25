@@ -72,14 +72,15 @@ def visualization(imageids, pageranks):
     locdict = locInfoParser.get_all_image_ids_locations()
 
     # f is the  task 3 html file
+    path = "../Data/"
     file = "task3.html"
-    f = open(file, 'w')
+    f = open(path+ file, 'w')
 
     args1 = parse_args_process()
     k = args1.k
     imgmessage = ""
     for id1 in range(len(imageids)):
-        imgmessage += '<div class="column"> \n <img src="../img_dir/' + locdict[imageids[id1]] + '/' + str(imageids[id1]) + '.jpg"  title=" location : ' + locdict[imageids[id1]] + '\nPagerank : ' + str(pageranks[id1]) + ' " style="width:100%"> \n <p align="center"> Image Id:' + imageids[id1] + '</p> </div>'
+        imgmessage += '<div class="column"> \n <img src="/img_dir/' + locdict[imageids[id1]] + '/' + str(imageids[id1]) + '.jpg"  title=" location : ' + locdict[imageids[id1]] + '\nPagerank : ' + str(pageranks[id1]) + ' " style="width:100%"> \n <p align="center"> Image Id:' + imageids[id1] + '</p> </div>'
 
 
     message = """
@@ -131,7 +132,7 @@ def visualization(imageids, pageranks):
         </html>"""
     f.write(message)
     f.close()
-    webbrowser.open_new_tab(file)
+    webbrowser.open_new_tab(path + file)
 
 
 if __name__ == '__main__':
