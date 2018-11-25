@@ -112,6 +112,15 @@ class LocationInfoParser:
         filePath = self.RELATIVE_TASKS_PATH + "task" + str(taskId) + "output.txt"
         return filePath
 
+    def getSymmetricGraph(self,graph):
+        for i in range(graph.shape[0]):
+            if i % 1000 == 0:
+                print("symmetric:", i)
+            for j in range(graph.shape[1]):
+                if graph[i][j] == 1:
+                    graph[j][i] = 1
+        return graph
+
 
 if __name__ == '__main__':
     locInfoParser = LocationInfoParser()
