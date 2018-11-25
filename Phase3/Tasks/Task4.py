@@ -95,6 +95,7 @@ def parse_args_process():
     argument_parse.add_argument('--id1', help='image id 1', type=str, required=True)
     argument_parse.add_argument('--id2', help='image id 2', type=str, required=True)
     argument_parse.add_argument('--id3', help='image id 3', type=str, required=True)
+    argument_parse.add_argument('--file_task1', help='Output file of task1', type=str, required=True)
     args = argument_parse.parse_args()
     return args
 
@@ -122,13 +123,14 @@ def find_k_most_relevant_images(score, k):
 
 # function to find most relevant k images and calculate their page ranks
 def ppr():
-    alpha = .15
+    alpha = 0.15
     args = parse_args_process()
     k = args.k
     id1 = args.id1
     id2 = args.id2
     id3 = args.id3
-    adj_mtrx = np.load('adjMatrix_visual_k7.npy')
+    fname=args.file_task1
+    adj_mtrx = np.load(fname)
     #adj_mtrx = np.load('adjMatrix_new.npy')
     row_sum = sum(adj_mtrx[0])
     adj_mtrx /= row_sum
@@ -142,7 +144,7 @@ def ppr():
     pr1 = pr.copy();
     for i in range(100):
         pr = alpha * np.matmul(adj_mtrx, pr) + (1 - alpha) * pr1
-    find_k_most_relevant_images(pr, k)
+    find_k_most_relevant_images(pr, k+3)
 
 if __name__ == '__main__':
     ppr()

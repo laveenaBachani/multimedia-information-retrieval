@@ -1,11 +1,9 @@
 import argparse
-from Phase3.APIs.visualization_apis import *
+import numpy as np
 from Phase3.Modules import MaxAMinPartitioning as mp
 from Phase3.Modules import SpectralPartitioning as sp
 from Phase3.Modules import ViewCreator as vc
 from Phase3.Modules import locationInfoParser as lip
-
-import time
 
 
 '''
@@ -45,6 +43,7 @@ def task2():
     spectra_partition = sp.SpectralPartitioning()
     clusters = spectra_partition.get_clusters(graph, num_clus)
     visualizer.visualize_clusters(clusters, "Spectral_Partitioning")
+
 
 if __name__ == '__main__':
     task2()
