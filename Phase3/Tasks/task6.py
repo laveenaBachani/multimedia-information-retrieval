@@ -139,7 +139,7 @@ def knn():
 
 
 def personalized_page_rank():
-    data = np.load('../Data/adj_matrix_new.npy')
+    data = np.load(input('Enter where is adjacency matrix for 5b:'))
     images = original_names
     d = names_for_page_rank
     classes = defaultdict(lambda: set())
