@@ -3,11 +3,11 @@ import os, webbrowser
 from Phase3.Modules import locationInfoParser
 import numpy as np
 
-image_file = "../../Phase2/Data/devset_textTermsPerImage.txt"
+image_file = "../Data/devset_textTermsPerImage.txt"
 
 # function to create HTML output file and display in browser
 def visualization(imageids,pageranks):
-    file = "task4imageoutput.html"
+    file = "../Data/task4imageoutput.html"
     locInfoParser = locationInfoParser.LocationInfoParser()
     locdict = locInfoParser.get_all_image_ids_locations()
     f = open(file, 'w')
@@ -15,7 +15,7 @@ def visualization(imageids,pageranks):
     args = parse_args_process()
     k = args.k
     for id1 in range(len(imageids)):
-        imgmessage += '<div class="column"> \n <img src="../../Phase2/Data/img/' +locdict[imageids[id1]] + '/' + str(imageids[id1]) + '.jpg"  title=" location : ' + locdict[imageids[id1]] + '\nPagerank : ' + str(pageranks[id1]) + ' " style="width:100%"> \n <p align="center"> Image Id:' + imageids[id1] + '</p> </div>'
+        imgmessage += '<div class="column"> \n <img src="../Data/img_dir/' +locdict[imageids[id1]] + '/' + str(imageids[id1]) + '.jpg"  title=" location : ' + locdict[imageids[id1]] + '\nPagerank : ' + str(pageranks[id1]) + ' " style="width:100%"> \n <p align="center"> Image Id:' + imageids[id1] + '</p> </div>'
 
     message = """
         <!DOCTYPE html>
