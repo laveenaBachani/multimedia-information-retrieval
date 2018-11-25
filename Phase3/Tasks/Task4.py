@@ -2,10 +2,10 @@ import argparse
 import os, webbrowser
 from Phase3.Modules import locationInfoParser
 import numpy as np
-# np.set_printoptions(threshold=np.nan)
 
 image_file = "../../Phase2/Data/devset_textTermsPerImage.txt"
 
+# function to create HTML output file and display in browser
 def visualization(imageids,pageranks):
     file = "task4imageoutput.html"
     locInfoParser = locationInfoParser.LocationInfoParser()
@@ -15,7 +15,7 @@ def visualization(imageids,pageranks):
     args = parse_args_process()
     k = args.k
     for id1 in range(len(imageids)):
-        imgmessage += '<div class="column"> \n <img src="../../Phase2/Data/img/' + str(imageids[id1]) + '.jpg"  title=" location : ' + locdict[imageids[id1]] + '\nPagerank : ' + str(pageranks[id1]) + ' " style="width:100%"> \n <p align="center"> Image Id:' + imageids[id1] + '</p> </div>'
+        imgmessage += '<div class="column"> \n <img src="../../Phase2/Data/img/' +locdict[imageids[id1]] + '/' + str(imageids[id1]) + '.jpg"  title=" location : ' + locdict[imageids[id1]] + '\nPagerank : ' + str(pageranks[id1]) + ' " style="width:100%"> \n <p align="center"> Image Id:' + imageids[id1] + '</p> </div>'
 
     message = """
         <!DOCTYPE html>
@@ -71,6 +71,7 @@ def visualization(imageids,pageranks):
     f.close()
     webbrowser.open_new_tab(file)
 
+# function to return list containing position of inputted image ids
 def imageids(id1, id2, id3):
     in_file = open(image_file, encoding="utf8")
     ids = []
@@ -97,6 +98,7 @@ def parse_args_process():
     args = argument_parse.parse_args()
     return args
 
+# funcion to display k most relevant images and their page rank as textual output
 def find_k_most_relevant_images(score, k):
     in_file = open(image_file, encoding="utf8")
     ids = []
@@ -116,31 +118,30 @@ def find_k_most_relevant_images(score, k):
         imageids.append(sorted_by_score[i][0])
         pageranks.append(sorted_by_score[i][1])
         print("id - " + sorted_by_score[i][0] + "\t score - " + str(sorted_by_score[i][1]))
-    # plotraph(imageids,pageranks)
     visualization(imageids,pageranks)
 
+# function to find most relevant k images and calculate their page ranks
 def ppr():
-    alpha = .85
+    alpha = .15
     args = parse_args_process()
     k = args.k
     id1 = args.id1
     id2 = args.id2
     id3 = args.id3
-    adj_mtrx = np.load('adjMatrix_new.npy')
+    adj_mtrx = np.load('adjMatrix_visual_k7.npy')
+    #adj_mtrx = np.load('adjMatrix_new.npy')
     row_sum = sum(adj_mtrx[0])
     adj_mtrx /= row_sum
     adj_mtrx = adj_mtrx.transpose()
     n = np.size(adj_mtrx[0])
     pr = (np.zeros((n, 1)))
     pos = imageids(id1, id2, id3)
-    # print(pos[0],pos[1],pos[2])
     for i in range(n):
         if (i in pos):
             pr[i][0] = 1 / 3
     pr1 = pr.copy();
     for i in range(100):
         pr = alpha * np.matmul(adj_mtrx, pr) + (1 - alpha) * pr1
-    # print(-np.sort(-pr,axis=0))
     find_k_most_relevant_images(pr, k)
 
 if __name__ == '__main__':
