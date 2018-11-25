@@ -68,7 +68,7 @@
                         var string = '';
                         for (i in data[iter]) {
                             imagePath = data[iter][i];
-                            imageLocationAndId = imagePath.split('img/')[1]
+                            imageLocationAndId = imagePath.split('img_dir/')[1]
                             imageLocation = imageLocationAndId.split('/')[0]
                             imageId = imageLocationAndId.split('/')[1]
                             string += '<temp class="col-3"><img class="img-thumbnail img-rounded center-block" src="' + data[iter][i]
