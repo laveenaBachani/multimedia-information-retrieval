@@ -44,7 +44,7 @@
         var data = [];
         $.ajax({
             'method': 'get',
-            'url': '/task6_knn.json?' + uuidv4(),
+            'url': '/task6_knn.json?temp=' + uuidv4(),
             'success': function (temp) {
                 data = temp;
                 var keys = Object.keys(data);
@@ -54,7 +54,7 @@
                         .text(iter));
 
                     $('#append_knn').append('<div id="' + iter + '_knn" class="content row col-12 knns" style="display: none;"><div>')
-                    data[iter] = data[iter].slice(0, 1000);
+                    data[iter] = data[iter].slice(0, 3000);
 
 
                     // $('.' + iter + '_knn').swipebox();
