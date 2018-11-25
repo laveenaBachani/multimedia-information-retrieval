@@ -3,11 +3,11 @@ import os, webbrowser
 from Phase3.Modules import locationInfoParser
 import numpy as np
 
-image_file = "../../Data/devset_textTermsPerImage.txt"
+image_file = "../Data/devset_textTermsPerImage.txt"
 
 # function to create HTML output file and display in browser
 def visualization(imageids,pageranks):
-    file = "task4imageoutput.html"
+    file = "../Data/task4imageoutput.html"
     locInfoParser = locationInfoParser.LocationInfoParser()
     locdict = locInfoParser.get_all_image_ids_locations()
     f = open(file, 'w')
