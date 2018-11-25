@@ -14,9 +14,9 @@ def parse_args_process():
     return args1
 
 
-def page_rank(k, alph=0.15, diff=0.001):
-    max_iter = 100
-    # alph = 0.15
+def page_rank(k, alph=0.15, max_iter=100):
+    # This function finds the pagerank value for each node in the graph
+    # input : k = number of images required in the out, alph = damping factor, max_iter = maximum iteration
 
     adj_mtrx = np.load('adjMatrix_new.npy')
     row_sum = sum(adj_mtrx[0])
@@ -28,7 +28,7 @@ def page_rank(k, alph=0.15, diff=0.001):
     pr1 = (np.ones((n, 1))) / n
 
     for i in range(max_iter):
-        pr = alph*np.matmul(adj_mtrx, pr) + (1 - alph)*pr1
+        pr = alph * np.matmul(adj_mtrx, pr) + (1 - alph) * pr1
 
     find_k_most_relevant_images(pr, k)
 
@@ -52,8 +52,9 @@ def find_k_most_relevant_images(score, k):
     sorted_by_score = sorted(id_score_dic.items(), key=lambda kv: kv[1])
     sorted_by_score.reverse()
     print("\nOutput - ")
+    print("Image id \t Pagerank")
     for i in range(k):
-        print("id - "+sorted_by_score[i][0]+"\t score - "+str(sorted_by_score[i][1]))
+        print(sorted_by_score[i][0] + "\t" + str(sorted_by_score[i][1]))
         image_id.append(sorted_by_score[i][0])
         pagerank.append(sorted_by_score[i][1])
 
@@ -75,7 +76,7 @@ def visualization(imageids, pageranks):
     k = args1.k
     imgmessage = ""
     for id1 in range(len(imageids)):
-        imgmessage += '<div class="column"> \n <img src="../img/' + str(imageids[id1]) + '.jpg"  title=" location : ' + locdict[imageids[id1]] + '\nPagerank : ' + str(pageranks[id1]) + ' " style="width:100%"> \n <p align="center"> Image Id:' + imageids[id1] + '</p> </div>'
+        imgmessage += '<div class="column"> \n <img src="../img/' + locdict[imageids[id1]] + '/' + str(imageids[id1]) + '.jpg"  title=" location : ' + locdict[imageids[id1]] + '\nPagerank : ' + str(pageranks[id1]) + ' " style="width:100%"> \n <p align="center"> Image Id:' + imageids[id1] + '</p> </div>'
 
 
     message = """
