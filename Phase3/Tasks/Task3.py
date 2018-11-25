@@ -79,7 +79,7 @@ def visualization(imageids, pageranks):
     k = args1.k
     imgmessage = ""
     for id1 in range(len(imageids)):
-        imgmessage += '<div class="column"> \n <img src="../img/' + locdict[imageids[id1]] + '/' + str(imageids[id1]) + '.jpg"  title=" location : ' + locdict[imageids[id1]] + '\nPagerank : ' + str(pageranks[id1]) + ' " style="width:100%"> \n <p align="center"> Image Id:' + imageids[id1] + '</p> </div>'
+        imgmessage += '<div class="column"> \n <img src="../img_dir/' + locdict[imageids[id1]] + '/' + str(imageids[id1]) + '.jpg"  title=" location : ' + locdict[imageids[id1]] + '\nPagerank : ' + str(pageranks[id1]) + ' " style="width:100%"> \n <p align="center"> Image Id:' + imageids[id1] + '</p> </div>'
 
 
     message = """
