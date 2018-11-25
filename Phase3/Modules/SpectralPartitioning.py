@@ -5,12 +5,11 @@ import sys
 
 class SpectralPartitioning:
 
-    def get_clusters(self,graph, k):
+    def get_clusters(self, graph, k):
 
         num_nodes = graph.shape[0]
         # labels = np.random.randint(1, size=num_nodes)
 
-        graph = self.getSymmetricGraph(graph)
         clusters = [list(range(graph.shape[0]))]
 
         for i in range(k-1):
@@ -96,12 +95,3 @@ class SpectralPartitioning:
         #print("returing clus")
         return clusters, ss_eval
 
-    @staticmethod
-    def getSymmetricGraph(graph):
-        for i in range(graph.shape[0]):
-            if i % 1000 == 0:
-                print("symmetric:", i)
-            for j in range(graph.shape[1]):
-                if graph[i][j] == 1:
-                    graph[j][i] = 1
-        return graph
