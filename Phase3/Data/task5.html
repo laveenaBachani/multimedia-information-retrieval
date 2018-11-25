@@ -44,7 +44,7 @@
     $(function () {
         $.ajax({
             'method': 'get',
-            'url': '/task5.json?' + uuidv4(),
+            'url': '/task5.json?temp=' + uuidv4(),
             'success': function (data) {
                 var images = data['images'];
                 var string = '';

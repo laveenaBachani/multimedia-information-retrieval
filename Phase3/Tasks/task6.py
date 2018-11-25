@@ -139,7 +139,7 @@ def knn():
 
 
 def personalized_page_rank():
-    data = np.load(input('Enter where is adjacency matrix for 5b:'))
+    data = np.load(input('Enter where is adjacency matrix for 6b:'))
     images = original_names
     d = names_for_page_rank
     classes = defaultdict(lambda: set())
@@ -162,6 +162,9 @@ def personalized_page_rank():
         ans.append(page_ranks)
         labels.append(x)
     ans = np.array(ans)
+    print(ans.shape)
+    ans = normalize_vector(ans.T).T
+    print(ans.shape)
     indexes = np.argmax(ans, axis=0)
     json_output = open('../Data/task6_ppr.json', 'w')
     classification_dict = defaultdict(lambda: [])
