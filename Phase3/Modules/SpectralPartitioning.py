@@ -1,6 +1,7 @@
 from numpy import linalg as LA
 import numpy as np
 import time
+import sys
 
 class SpectralPartitioning:
 
@@ -13,19 +14,29 @@ class SpectralPartitioning:
         clusters = [list(range(graph.shape[0]))]
 
         for i in range(k-1):
+
             # get largest cluster
-            tuple = max(enumerate(clusters), key=lambda x: len(x[1]))
-            max_len_cluster = tuple[1]
-            max_len_cluster_index = tuple[0]
+            #tuple = max(enumerate(clusters), key=lambda x: len(x[1]))
+            #max_len_cluster = tuple[1]
+            #max_len_cluster_index = tuple[0]
 
-            # adjacency matrix for cluster nodes
-            cluster_adj_mat = graph[:, max_len_cluster]
-            cluster_adj_mat = cluster_adj_mat[max_len_cluster, :]
-
+            # to store index of cluster which will be divided in this iteration
+            old_cluster_index = 0
+            # to store second smallest eigen value of old cluster which will be divided in this iteration
+            old_cluster_ss_eval = sys.maxsize
+            new_clusters = clusters[old_cluster_index]
             # creating new clusters from previous large cluster
-            new_clusters = self.spectral_partition(cluster_adj_mat, max_len_cluster)
+            for cluster_index, cluster in enumerate(clusters):
+                # adjacency matrix for cluster nodes
+                cluster_adj_mat = graph[:, cluster]
+                cluster_adj_mat = cluster_adj_mat[cluster, :]
+                possible_new_clusters, ss_eval = self.spectral_partition(cluster_adj_mat, cluster)
+                if ss_eval<=old_cluster_ss_eval:
+                    old_cluster_ss_eval = ss_eval
+                    old_cluster_index = cluster_index
+                    new_clusters = possible_new_clusters
 
-            del clusters[max_len_cluster_index]
+            del clusters[old_cluster_index]
             clusters += new_clusters
             # print(clusters)
             # print("creating cluster ", (i + 1))
@@ -71,6 +82,9 @@ class SpectralPartitioning:
         # eigen vector of second smallest eigen value
         ss_evec = e_vecs[:, ss_index]
 
+        # second smallest eigen value
+        ss_eval = e_vals[ss_index]
+
         #print("creating 2 clus")
         clusters = [[], []]
         for i, v in enumerate(ss_evec):
@@ -80,7 +94,7 @@ class SpectralPartitioning:
                 clusters[1].append(nodeIds[i])
 
         #print("returing clus")
-        return clusters
+        return clusters, ss_eval
 
     @staticmethod
     def getSymmetricGraph(graph):
