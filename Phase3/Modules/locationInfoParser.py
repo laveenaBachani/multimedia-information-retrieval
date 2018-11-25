@@ -10,7 +10,7 @@ class LocationInfoParser:
 
     TXT_PER_IMAGE_FILE = "devset_textTermsPerImage.txt"
 
-    IMG_DIR = "img/"
+    IMG_DIR = "img_dir/"
 
     CLUSTER_ALGO_MAX_A_MIN_LABEL = "mam"
 
