@@ -132,7 +132,7 @@ def visualization(imageids, pageranks):
         </html>"""
     f.write(message)
     f.close()
-    webbrowser.open_new_tab(path + file)
+    # webbrowser.open_new_tab(path + file)
 
 
 if __name__ == '__main__':
