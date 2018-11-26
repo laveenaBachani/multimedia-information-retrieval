@@ -10,15 +10,17 @@ def parse_args_process():
     # Argument Parser
     argument_parse = argparse.ArgumentParser()
     argument_parse.add_argument('--k', help='The number of most dominant images you want to find', type=int, required=True)
+    argument_parse.add_argument('--k_task_1', help='k value in task 1', type=str, required=True)
     args1 = argument_parse.parse_args()
     return args1
 
 
-def page_rank(k, alph=0.15, max_iter=100):
+def page_rank(k, alph=0.15, max_iter=40):
     # This function finds the pagerank value for each node in the graph
     # input : k = number of images required in the out, alph = damping factor, max_iter = maximum iteration
-
-    adj_mtrx = np.load('adjMatrix_new.npy')
+    args = parse_args_process()
+    adj_mtrx = np.load('adjMatrix_visual_k' + args.k_task_1 + '.npy')
+    # sum_columns = np.sum(adj_mtrx, axis=0)
     row_sum = sum(adj_mtrx[0])
     adj_mtrx /= row_sum
     adj_mtrx = adj_mtrx.transpose()
@@ -31,6 +33,7 @@ def page_rank(k, alph=0.15, max_iter=100):
         pr = alph * np.matmul(adj_mtrx, pr) + (1 - alph) * pr1
 
     find_k_most_relevant_images(pr, k)
+    # find_k_most_relevant_images(sum_columns, k)
 
 
 def find_k_most_relevant_images(score, k):
@@ -69,14 +72,15 @@ def visualization(imageids, pageranks):
     locdict = locInfoParser.get_all_image_ids_locations()
 
     # f is the  task 3 html file
+    path = "../Data/"
     file = "task3.html"
-    f = open(file, 'w')
+    f = open(path+ file, 'w')
 
     args1 = parse_args_process()
     k = args1.k
     imgmessage = ""
     for id1 in range(len(imageids)):
-        imgmessage += '<div class="column"> \n <img src="../img/' + locdict[imageids[id1]] + '/' + str(imageids[id1]) + '.jpg"  title=" location : ' + locdict[imageids[id1]] + '\nPagerank : ' + str(pageranks[id1]) + ' " style="width:100%"> \n <p align="center"> Image Id:' + imageids[id1] + '</p> </div>'
+        imgmessage += '<div class="column"> \n <img src="/img_dir/' + locdict[imageids[id1]] + '/' + str(imageids[id1]) + '.jpg"  title=" location : ' + locdict[imageids[id1]] + '\nPagerank : ' + str(pageranks[id1]) + ' " style="width:100%"> \n <p align="center"> Image Id:' + imageids[id1] + '</p> </div>'
 
 
     message = """
@@ -128,7 +132,7 @@ def visualization(imageids, pageranks):
         </html>"""
     f.write(message)
     f.close()
-    webbrowser.open_new_tab(file)
+    # webbrowser.open_new_tab(path + file)
 
 
 if __name__ == '__main__':
