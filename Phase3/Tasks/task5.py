@@ -187,7 +187,7 @@ if __name__ == '__main__':
         if similarity_with not in image_names:
             print('Following image id does not exist')
             continue
-        t = int(input('Enter the number of similar images:'))
+        t = int(input('Enter the number of similar images:')) + 1
 
         vector = ans[image_names[similarity_with]].reshape(1, ans.shape[1])
         similarity_indexes = defaultdict(lambda: 0)
