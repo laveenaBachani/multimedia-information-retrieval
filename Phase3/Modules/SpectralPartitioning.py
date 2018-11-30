@@ -96,7 +96,8 @@ class SpectralPartitioning:
         clusters = self.getClusterFromEvec(ss_evec,nodeIds)
         #print(clusters)
         if(len(clusters[0]) ==0 or len(clusters[1]) ==0):
-            clusters = self.getComponentsFromEvec(e_vecs[:, 1],nodeIds)
+            clusters = self.getClusterFromEvec(e_vecs[:, 1], nodeIds)
+            ss_eval = e_vals[1]
             #print("inside:",clusters)
             #print("evec:",e_vecs)
         #print("recieved clus:",nodeIds)
