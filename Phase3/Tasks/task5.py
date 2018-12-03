@@ -2,9 +2,8 @@ import argparse
 from os import listdir
 from collections import defaultdict
 import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
-import math
+import json
+from sklearn.decomposition import PCA
 
 np.random.seed(50)
 
@@ -93,12 +92,46 @@ class HashTable:
             for j in range(len(input_vectors)):
                 self.hashes_dict[i][hashes[i][j]].add(j)
 
-    def get_item(self, input_vectors):
-        hashes = self.generate_hash(input_vectors)
-        ans_set = set()
+    def hammig(self, s1, s2):
+        temp = 0
+        for i in range(len(s1)):
+            if s1[i] != s2[i]:
+                temp += 1
+        return temp
+
+    def get_hamming_distance(self, hashes):
+        temp = []
         for i in range(self.number_hashes):
-            for j in range(len(input_vectors)):
-                ans_set = ans_set | self.hashes_dict[i][hashes[i][j]]
+            for j in range(len(hashes[i])):
+                array = []
+                for hash in self.hashes_dict[i]:
+                    array.append((self.hammig(hash, hashes[i][j]), hash))
+                array = list(map(lambda x: x[1], sorted(array, key=lambda x: x[0])))
+                temp.append(array)
+        return temp
+
+    def get_item(self, input_vectors, t):
+        hashes = self.generate_hash(input_vectors)
+        ans_set = defaultdict(lambda: 0)
+        found = 0
+        hamming_distances = self.get_hamming_distance(hashes)
+        index = 0
+        while found < t:
+            for i in range(len(hamming_distances)):
+                if index < len(hamming_distances[i]):
+                    for x in self.hashes_dict[i][hamming_distances[i][index]]:
+                        ans_set[x] += 1
+                        if ans_set[x] == self.number_hashes:
+                            found += 1
+            index += 1
+        # for i in range(self.number_hashes):
+        #     for j in range(len(input_vectors)):
+        #         for x in self.hashes_dict[i][hashes[i][j]]:
+        #             ans_set[x] += 1
+        keys = list(ans_set.keys())
+        for x in keys:
+            if ans_set[x] < self.number_hashes:
+                del ans_set[x]
         return ans_set
 
 
@@ -110,65 +143,74 @@ def parse_args_process():
     argument_parse = argparse.ArgumentParser()
     argument_parse.add_argument('--k', help='The number of hash layers per layer', type=int, required=True)
     argument_parse.add_argument('--l', help='The number of layers', type=int, required=True)
+    # argument_parse.add_argument('--image_id', help='The number of layers', type=str, required=True)
+    # argument_parse.add_argument('--t', help='The number of layers', type=int, required=True)
     args = argument_parse.parse_args()
     return args
+
+
+def get_PCA(vector, k):
+    pca = PCA(n_components=k)
+    new_vector = pca.fit_transform(vector)
+    return new_vector, pca.components_
+
+
+def normalize_vector(vector):
+    minimum, maximum = np.min(vector, axis=0), np.max(vector, axis=0)
+    ans = (vector - minimum)
+    diff = maximum - minimum
+    return ans / diff
+
+
+def get_PCA(vector, k):
+    pca = PCA(n_components=k)
+    new_vector = pca.fit_transform(vector)
+    return new_vector, pca.components_
 
 
 if __name__ == '__main__':
     # number of hashes per layer
     args = parse_args_process()
     k = args.k
-    # similarity_with = '2482756687'
-    # number of similar images
-    # t = 5
-    # number of layers
     l = args.l
     ans, image_names, names_sorted = validate_data()
+    ans = normalize_vector(ans)
+    ans, _ = get_PCA(ans, 250)
     layers = []
     for _ in range(l):
-        hash_table = HashTable(2, 20, ans.shape[1])
+        hash_table = HashTable(args.k, 10, ans.shape[1])
         hash_table.set_item(ans, names_sorted)
         layers.append(hash_table)
-    processing_required = input('Do you want to find something similar(y/n)')
-    while processing_required == 'y':
-        similarity_with = input('Enter the image id')
+    inp = 'y'
+    while inp == 'y':
+        similarity_with = input('Enter the image id:')
         if similarity_with not in image_names:
             print('Following image id does not exist')
             continue
-        t = int(input('Enter the number of similar images you want'))
+        t = int(input('Enter the number of similar images:')) + 1
 
         vector = ans[image_names[similarity_with]].reshape(1, ans.shape[1])
-        similarity_indexes = set()
+        similarity_indexes = defaultdict(lambda: 0)
         for i in range(l):
-            temp = layers[i].get_item(vector)
-            similarity_indexes = similarity_indexes | temp
-        vectors = np.take(ans, list(similarity_indexes), axis=0)
+            temp = layers[i].get_item(vector, t)
+            for x in temp:
+                similarity_indexes[x] += temp[x]
+
+        vectors = np.take(ans, list(similarity_indexes.keys()), axis=0)
         labels = np.take(names_sorted, list(similarity_indexes))
         dst = euclidean_dst(vectors, vector)
-        print(len(dst))
         temp_ans = np.argpartition(dst, min(t, len(dst) - 1))[:min(t, len(dst))]
         ans_labels = np.take(labels, temp_ans)
-        fig = plt.figure()
-        n = math.ceil(len(ans_labels) / 2)
+        f = open('../Data/task5.json', 'w')
+        ans_array = []
         for i in range(len(ans_labels)):
-            img = mpimg.imread('../Data/images/{0}.jpg'.format(ans_labels[i]))
-            plt.subplot(n, 2, i + 1)
-            plt.imshow(img)
-        plt.show()
-        ans_distance = np.take(dst, temp_ans)
-        processing_required = input('Do you want to find something similar(y/n)')
-
-    # similarity_indexes = set()
-    # vector = ans[image_names[similarity_with]].reshape(1, ans.shape[1])
-    # for i in range(t):
-    #     temp = layers[i].get_item(vector)
-    #     similarity_indexes = similarity_indexes | temp
-    #
-    # vectors = np.take(ans, list(similarity_indexes), axis=0)
-    # labels = np.take(names_sorted, list(similarity_indexes))
-    # dst = euclidean_dst(vectors, vector)
-    # ans = np.argpartition(dst, t)[:t]
-    # ans_labels = np.take(labels, ans)
-    # ans_distance = np.take(dst, ans)
-    # print(ans_labels)
-    # print(ans_distance)
+            ans_array.append('/images/{0}.jpg'.format(ans_labels[i]))
+        final_ans = {'images': ans_array, 'outputs': {}}
+        for x in similarity_indexes:
+            final_ans['outputs'][names_sorted[x]] = similarity_indexes[x]
+        final_ans['total'] = sum(similarity_indexes.values())
+        final_ans['unique'] = len(similarity_indexes)
+        f.write(json.dumps(final_ans))
+        f.flush()
+        f.close()
+        inp = input('Do you want to process more (y/n):')

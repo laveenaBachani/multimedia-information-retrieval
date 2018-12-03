@@ -10,7 +10,7 @@ class LocationInfoParser:
 
     TXT_PER_IMAGE_FILE = "devset_textTermsPerImage.txt"
 
-    IMG_DIR = "img/"
+    IMG_DIR = "img_dir/"
 
     CLUSTER_ALGO_MAX_A_MIN_LABEL = "mam"
 
@@ -82,6 +82,8 @@ class LocationInfoParser:
             imageId = line.split()[0]
             ids.append(imageId)
 
+        ids.sort()
+
         return ids
 
     def get_image_path(self, imageId, location):
@@ -109,6 +111,15 @@ class LocationInfoParser:
     def get_task_ouput_file_path(self, taskId):
         filePath = self.RELATIVE_TASKS_PATH + "task" + str(taskId) + "output.txt"
         return filePath
+
+    def getSymmetricGraph(self,graph):
+        for i in range(graph.shape[0]):
+            if i % 1000 == 0:
+                print("symmetric:", i)
+            for j in range(graph.shape[1]):
+                if graph[i][j] == 1:
+                    graph[j][i] = 1
+        return graph
 
 
 if __name__ == '__main__':

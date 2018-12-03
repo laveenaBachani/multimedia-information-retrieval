@@ -69,7 +69,6 @@ class MaxAMinPartitioning:
     def get_clusters(self, graph, k):
         leaders = []
         numNodes = graph.shape[0]
-        graph = self.getSymmetricGraph(graph)
 
         firstLeader = random.randint(0, numNodes-1)
         leaders.append(firstLeader)
@@ -166,15 +165,6 @@ class MaxAMinPartitioning:
             if graph[u][i] >= 1:
                 list.append(i)
         return list
-
-    def getSymmetricGraph(self,graph):
-        for i in range(graph.shape[0]):
-            if i % 1000 == 0:
-                print("symmetric:",i)
-            for j in range(graph.shape[1]):
-                if graph[i][j] == 1:
-                    graph[j][i] = 1
-        return graph
 
 
 graph = [

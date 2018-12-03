@@ -1,14 +1,14 @@
 import numpy as np
 from os import listdir
 from collections import defaultdict, Counter
-from scipy import stats
+from sklearn.decomposition import PCA
 import json
 
 
 def pageRank(G, mover, s=0.85, maxerr=0.001):
     n = G.shape[0]
     G = G / np.sum(G, axis=0).reshape(1, n)
-    ro, r = np.zeros((n, 1)), np.ones((n, 1)) / n
+    ro, r = np.zeros((n, 1)), mover.reshape(n, 1).copy()  # np.ones((n, 1)) / n
     mover = mover.reshape(n, 1)
     k = 0
     error = float('inf')
@@ -48,7 +48,8 @@ def validate_data():
         for y in dictionary[x]:
             if temp[x] != dictionary[x][y]:
                 raise LookupError('The images are mismatched')
-    image_names = {x: i for i, x in enumerate(sorted(list(image_names)))}
+    original_names = sorted(list(image_names))
+    image_names = {x: i for i, x in enumerate(original_names)}
     names = sorted(list(names))
     files = sorted(list(files))
     ans = [[] for _ in range(len(image_names))]
@@ -66,11 +67,32 @@ def validate_data():
                             map(lambda x: float(x), data[1:]))
                     line = f.readline()
     ans = np.array(ans)
+    return ans, image_names, original_names
 
-    return ans, image_names
+
+matrix, names, original_names = validate_data()
+
+names_for_page_rank = names.copy()
 
 
-matrix, names = validate_data()
+def normalize_vector(vector):
+    minimum, maximum = np.min(vector, axis=0), np.max(vector, axis=0)
+    ans = (vector - minimum)
+    diff = maximum - minimum
+    return ans / diff
+
+
+def get_PCA(vector, k):
+    pca = PCA(n_components=k)
+    new_vector = pca.fit_transform(vector)
+    return new_vector, pca.components_
+
+
+#
+
+
+matrix = normalize_vector(matrix)
+matrix, _ = get_PCA(matrix, 250)
 
 
 def euclidean_dst(vector, original_vector):
@@ -95,7 +117,7 @@ def knn():
         classification_file = open('../Data/KNN_Output.txt', 'w')
         for id in names:
             distances = euclidean_dst(vector, matrix[names[id]])
-            distindex = np.argpartition(distances, 6)[:6]
+            distindex = np.argpartition(distances, 7)[:7]
             label = Counter(lbls[distindex].tolist())
             labels = sorted(label.items(), key=lambda x: -x[1])
             ans = []
@@ -117,19 +139,9 @@ def knn():
 
 
 def personalized_page_rank():
-    data = np.load('../Data/adj_matrix_new.npy')
-    images = []
-    d = {}
-
-    with open('../Data/devset_textTermsPerImage.txt') as f:
-        line = f.readline()
-        i = 0
-        while line:
-            line = line.split()[0]
-            d[line] = i
-            images.append(line)
-            line = f.readline()
-            i += 1
+    data = np.load(input('Enter where is adjacency matrix for 6b:'))
+    images = original_names
+    d = names_for_page_rank
     classes = defaultdict(lambda: set())
     labels = []
     dont_classify = set()
@@ -143,12 +155,16 @@ def personalized_page_rank():
     ans = []
     for x in classes:
         movers = np.zeros(len(data))
+
         for y in classes[x]:
-            movers[y] = 1
-        page_ranks = pageRank(data.T, movers).reshape(-1)
+            movers[y] = 1 / len(classes[x])
+        page_ranks = pageRank(data.T, movers, s=0.85, maxerr=0.001).reshape(-1)
         ans.append(page_ranks)
         labels.append(x)
     ans = np.array(ans)
+    print(ans.shape)
+    ans = normalize_vector(ans.T).T
+    print(ans.shape)
     indexes = np.argmax(ans, axis=0)
     json_output = open('../Data/task6_ppr.json', 'w')
     classification_dict = defaultdict(lambda: [])

@@ -5,7 +5,6 @@
     <title>Title</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link rel="stylesheet" href="src/css/swipebox.css">
 </head>
 <body>
 <div class="container row">
@@ -31,21 +30,30 @@
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/async/2.6.1/async.min.js"></script>
-<script src="src/js/jquery.swipebox.min.js"></script>
+<script src="src/js/jquery.easyPaginate.js"></script>
 <script>
+    function uuidv4() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
+
     $(function () {
+        var data = [];
         $.ajax({
             'method': 'get',
-            'url': '/task6_ppr.json',
-            'success': function (data) {
+            'url': '/task6_ppr.json?temp=' + uuidv4(),
+            'success': function (temp) {
+                data = temp;
                 var keys = Object.keys(data);
                 for (iter in data) {
                     $('#knn').append($("<option></option>")
                         .attr("value", iter)
                         .text(iter));
 
-                    $('#append_knn').append('<div id="' + iter + '_knn" class="col-12 knns row" style="display: none;"><div>')
-                    data[iter] = data[iter].slice(0, 1000);
+                    $('#append_knn').append('<div id="' + iter + '_knn" class="content row col-12 knns" style="display: none;"><div>')
+                    data[iter] = data[iter].slice(0, 3000);
 
 
                     // $('.' + iter + '_knn').swipebox();
@@ -53,12 +61,23 @@
                         $('.knns').css('display', 'none');
                         $('.knns').html('');
                         var value = $('#knn').val() + '_knn'
-                        $('#' + value).css('display', 'block')
-                        var iter = $('#knn').val()
+                        $('#' + value).css('display', 'block');
+                        var iter = $('#knn').val();
+                        $('#' + iter + '_knn').html('');
+
+                        var string = '';
                         for (i in data[iter]) {
-                            $('#' + iter + '_knn').append('<img src="' + data[iter][i]
-                                + '" style="width: 100%;" class="col-2"></img>')
+
+                            string += '<temp class="col-2"><img class="img-thumbnail img-rounded center-block" src="' + data[iter][i]
+                                + '" style="width: 100%;" class="col-12"></img> <div class="col-12">' + data[iter][i].split('images/')[1] + '</div></temp>'
                         }
+                        var id = uuidv4();
+                        $('#' + iter + '_knn').html('<div class="row col-12" id="' + id + '">' + string + '</div>');
+                        // $('#' + id).easyPaginate({
+                        //     paginateElement: 'temp',
+                        //     elementsPerPage: 1000,
+                        //     effect: 'climb'
+                        // });
                     })
                 }
             }
